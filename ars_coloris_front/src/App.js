@@ -8,6 +8,8 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import ProductDetails from "./pages/ProductDetails";
 
+import Cooperation from "./pages/Cooperation";
+
 import "./App.css";
 
 function App() {
@@ -22,6 +24,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/cart" element={<Cart />} />
 				<Route path="/product/:id" element={<ProductDetails />} />
+				<Route path="/Cooperation" element={<Cooperation />} />
             </Routes>
         </BrowserRouter>
     );

@@ -30,31 +30,28 @@ function Home() {
             <section className="home-section">
                 <h2>Dlaczego Ars Coloris?</h2>
 
-                <div className="features">
-                    <div className="feature-card">
-                        <h3>Ręczne wykonanie</h3>
 
-                        <p>
-                            Każda mozaika jest tworzona ręcznie z najwyższą starannością.
-                        </p>
-                    </div>
+		<div className="features">
+			<div className="feature-card">
+				<div className="feature-icon">♡</div>
+				<h3>Ręczne wykonanie</h3>
+				<p>Każda mozaika jest tworzona ręcznie z najwyższą starannością.</p>
+			</div>
 
-                    <div className="feature-card">
-                        <h3>Unikalność</h3>
+			<div className="feature-card">
+				<div className="feature-icon">✦</div>
+				<h3>Unikalność</h3>
+				<p>Każda praca jest jedyna w swoim rodzaju i ma własny charakter.</p>
+			</div>
 
-                        <p>
-                            Każda praca jest jedyna w swoim rodzaju i ma własny charakter.
-                        </p>
-                    </div>
+			<div className="feature-card">
+				<div className="feature-icon">✧</div>
+				<h3>Idealne na prezent</h3>
+				<p>Mozaiki Ars Coloris to wyjątkowy prezent, który pozostaje na lata.</p>
+			</div>
+		</div>
 
-                    <div className="feature-card">
-                        <h3>Idealne na prezent</h3>
 
-                        <p>
-                            Mozaiki Ars Coloris to wyjątkowy prezent, który pozostaje na lata.
-                        </p>
-                    </div>
-                </div>
             </section>
         </div>
     );

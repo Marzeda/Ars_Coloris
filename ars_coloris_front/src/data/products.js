@@ -19,7 +19,7 @@ const products = [
 		deliveryTime: "3-15 dni roboczych",
         images: [zlota1, zlota2],
         description:
-            "Ręcznie wykonana mozaika w odcieniach turkusu, złota i błękitu.",
+            "Ręcznie wykonana mozaika w odcieniach turkusu, złota i błękitu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dapibus, arcu et gravida pretium, quam magna consectetur sapien, nec posuere massa risus sed erat."
     },
     {
         id: 2,
@@ -30,7 +30,7 @@ const products = [
 		deliveryTime: "3-5 dni roboczych",
         images: [ptaki1, ptaki2],
         description:
-            "Dekoracyjna mozaika inspirowana naturą i lekkością ptasich kształtów.",
+            "Dekoracyjna mozaika inspirowana naturą i lekkością ptasich kształtów. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dapibus, arcu et gravida pretium, quam magna consectetur sapien, nec posuere massa risus sed erat. Ut venenatis quam finibus pretium convallis. Mauris iaculis fermentum nunc nec consequat. Vivamus eleifend, ligula et pharetra imperdiet, nisi leo aliquet ex, eleifend ullamcorper ipsum risus nec ipsum. Nam eu faucibus lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi tincidunt nisi sed metus tempus, vitae hendrerit ante mattis. Duis tincidunt, turpis vel faucibus volutpat, justo leo elementum nunc, id bibendum mi nulla quis urna. Vestibulum ut mi arcu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed vitae nulla eros. Phasellus molestie iaculis ligula, eget tempus ipsum auctor in. Mauris id mauris et lacus posuere convallis sit amet nec odio. Duis placerat, lacus a finibus fringilla, felis urna tristique ante, in luctus urna arcu a nulla. Cras non vehicula augue, rhoncus dapibus neque.Sed rhoncus lectus nisl, quis bibendum libero bibendum non. Aliquam erat volutpat. Vivamus at dapibus orci, vitae vulputate lacus. Aliquam fringilla mattis magna euismod maximus. Proin hendrerit nec ipsum sed placerat. Fusce cursus nisl sit amet velit rhoncus ullamcorper. Nulla non risus non libero elementum vehicula eget pulvinar tortor. Pellentesque et vulputate nisl. Vivamus et arcu dictum, tincidunt felis sed, luctus lorem. Pellentesque tempus elit in hendrerit tristique. In ipsum mi, lobortis quis fermentum non, faucibus quis nulla.",
     },
     {
         id: 3,

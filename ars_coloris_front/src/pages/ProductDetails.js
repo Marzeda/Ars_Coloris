@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 
 import products from "../data/products";
 import ImageModal from "../components/ImageModal";
+import { CartContext } from "../context/CartContext";
 
 function ProductDetails() {
     const { id } = useParams();
@@ -11,6 +12,15 @@ function ProductDetails() {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalImage, setModalImage] = useState(null);
+	const [added, setAdded] = useState(false);
+	const { addToCart } = useContext(CartContext);
+	const handleAddToCart = () => {
+		addToCart(product);
+		setAdded(true);
+		setTimeout(() => {
+			setAdded(false);
+		}, 1500);
+	};
 
     if (!product) {
         return <h1>Nie znaleziono produktu</h1>;
@@ -79,7 +89,12 @@ function ProductDetails() {
 
                 <h2>{product.price} zł</h2>
 
-                <button>Dodaj do koszyka</button>
+                <button 
+					className={added ? "added-button" : ""}
+					onClick={handleAddToCart}
+				>
+					{added ? "✓ Dodano" : "Dodaj do koszyka"}
+				</button>
             </div>
 
             <ImageModal

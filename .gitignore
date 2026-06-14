@@ -20,3 +20,6 @@ coverage/
 
 # System
 .DS_Store
+
+# Notatki
+notatki.txt
