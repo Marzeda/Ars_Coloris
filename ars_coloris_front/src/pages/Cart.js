@@ -1,5 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
+import { Link } from "react-router-dom";
+
 
 function Cart() {
     const {
@@ -65,7 +67,30 @@ function Cart() {
 
                     <div className="cart-summary">
                         <h2>Razem: {totalPrice} zł</h2>
+						<div className="cart-actions">
+
+						<Link to="/gallery">
+							<button className="continue-shopping">
+								← Dodaj kolejny produkt
+							</button>
+						</Link>
+
+						<Link to="/order">
+							<button className="checkout-button">
+								Przejdź do zamówienia →
+							</button>
+						</Link>
+
+					</div>
                     </div>
+					
+					<div className="cart-actions">
+    <Link to="/gallery">
+        <button className="continue-shopping">
+            ← Kontynuuj zakupy
+        </button>
+    </Link>
+</div>
                 </>
             )}
         </div>

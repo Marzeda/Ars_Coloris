@@ -34,7 +34,15 @@ function Navbar() {
 					<li><Link to="/Cooperation">Współpraca</Link></li>
                     <li><Link to="/about">O artystce</Link></li>
                     <li><Link to="/contact">Kontakt</Link></li>
-					<li><Link to="/cart">Koszyk ({totalItems})</Link></li>
+					<li><Link to="/cart" className="cart-link">
+							Koszyk
+							{totalItems > 0 && (
+								<span key={totalItems} className="cart-badge">
+									{totalItems}
+								</span>
+							)}
+						</Link>
+					</li>
                 </ul>
             </nav>
 
