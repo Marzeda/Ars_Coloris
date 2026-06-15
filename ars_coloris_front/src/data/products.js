@@ -36,6 +36,7 @@ const products = [
         id: 3,
         name: "Stolik Flora",
         category: "Stoliki mozaikowe",
+		isNew: true,
         price: 950,
 		availability: "Dostępny",
 		deliveryTime: "3-5 dni roboczych",
@@ -45,7 +46,7 @@ const products = [
     },
     {
         id: 4,
-        name: "Szept Lata",
+        name: "Stolik Szept Lata",
         category: "Stoliki mozaikowe",
         price: 890,
 		availability: "Dostępny",
