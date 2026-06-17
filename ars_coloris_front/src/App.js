@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import ScrollToTop from "./components/ScrollToTop";
 
 import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
@@ -17,6 +18,8 @@ import "./App.css";
 function App() {
     return (
         <BrowserRouter>
+            <ScrollToTop />
+
             <Navbar />
 
             <Routes>
