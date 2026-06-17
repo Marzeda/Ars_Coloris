@@ -1,4 +1,9 @@
 import { Link } from "react-router-dom";
+import {
+    FaEnvelope,
+    FaPhoneAlt,
+    FaUniversity
+} from "react-icons/fa";
 
 function Footer() {
     return (
@@ -22,15 +27,23 @@ function Footer() {
                         <li><Link to="/gallery">Galeria</Link></li>
                         <li><Link to="/cooperation">Współpraca</Link></li>
                         <li><Link to="/contact">Kontakt</Link></li>
+						<li><Link to="/process">Proces tworzenia</Link></li>
+						<li><Link to="/projects">Zrealizowane projekty</Link></li>
                     </ul>
                 </div>
 
-                <div className="footer-section">
-                    <h3>Kontakt</h3>
+                
+				<div className="footer-section">
+    <h3>Kontakt</h3>
 
-                    <p>📧 kontakt@arscoloris.pl</p>
-                    <p>📞 +48 000 000 000</p>
-                </div>
+    <p><FaEnvelope /> kontakt@arscoloris.pl</p>
+
+    <p><FaPhoneAlt /> +48 000 000 000</p>
+
+    <p>
+        <FaUniversity /> 12 1233 3212 1231 1231 1231 1231
+    </p>
+</div>
 
             </div>
 

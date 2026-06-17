@@ -39,16 +39,22 @@ function Navbar() {
                         Galeria
                     </Link>
                 </li>
-
-                <li>
-                    <Link to="/cooperation" onClick={closeMenu}>
-                        Współpraca
+				
+				<li>
+                    <Link to="/process" onClick={closeMenu}>
+                        Jak powstają mozaiki
+                    </Link>
+                </li>
+				
+				<li>
+                    <Link to="/projects" onClick={closeMenu}>
+                        Zrealizowane projekty
                     </Link>
                 </li>
 
                 <li>
-                    <Link to="/about" onClick={closeMenu}>
-                        O artystce
+                    <Link to="/cooperation" onClick={closeMenu}>
+                        Współpraca
                     </Link>
                 </li>
 

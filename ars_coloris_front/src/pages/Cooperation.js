@@ -1,3 +1,9 @@
+import {
+    FaStore,
+    FaHome,
+    FaPalette
+} from "react-icons/fa";
+
 function Cooperation() {
     return (
         <div className="page cooperation-page">
@@ -13,7 +19,10 @@ function Cooperation() {
             <div className="cooperation-benefits">
 
                 <div className="benefit-card">
-					<div className="benefit-icon">🏪</div>
+					
+					<div className="benefit-icon">
+    <FaStore />
+</div>
                     <h3>Dla sklepów i butików</h3>
                     <p>
                         Oryginalne produkty, które wyróżnią ofertę
@@ -22,7 +31,10 @@ function Cooperation() {
                 </div>
 
                 <div className="benefit-card">
-				<div className="benefit-icon">🏡</div>
+				
+				<div className="benefit-icon">
+    <FaHome />
+</div>
                     <h3> Dla projektantów wnętrz</h3>
                     <p>
                         Możliwość realizacji indywidualnych projektów
@@ -31,7 +43,10 @@ function Cooperation() {
                 </div>
 
                 <div className="benefit-card">
-				<div className="benefit-icon">🎨</div>
+				
+				<div className="benefit-icon">
+    <FaPalette />
+</div>
                     <h3> Zamówienia indywidualne</h3>
                     <p>
                         Tworzymy mozaiki na specjalne zamówienie,
