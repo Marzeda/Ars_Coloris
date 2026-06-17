@@ -5,6 +5,10 @@ body {
     color: #222;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -469,7 +473,6 @@ body {
 
     z-index: 9999;
 }
-
 .modal-image {
     max-width: 90%;
     max-height: 90%;
@@ -477,19 +480,8 @@ body {
     border-radius: 8px;
 
     box-shadow: 0 0 40px rgba(255,255,255,0.25);
-	
-	cursor: zoom-in;
-    transition: transform 0.4s ease;
 }
 
-.zoomable-image {
-    cursor: zoom-in;
-    transition: transform 0.25s ease;
-}
-
-.zoomable-image:hover {
-    transform: scale(2);
-}
 
 .modal-close {
     position: fixed;
@@ -912,7 +904,7 @@ body {
 
     .feature-card,
     .benefit-card {
-        width: 100%;
+        width: 90%;
         max-width: 320px;
     }
 
