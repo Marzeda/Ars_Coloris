@@ -6,6 +6,11 @@ import ImageModal from "./ImageModal";
 
 function Navbar() {
     const [showLogo, setShowLogo] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const closeMenu = () => {
+        setMenuOpen(false);
+    };
 
     return (
         <>
@@ -21,25 +26,42 @@ function Navbar() {
                     />
                 </div>
 
-                <ul className="nav-links">
+                <button
+                    className="hamburger"
+                    onClick={() => setMenuOpen(!menuOpen)}
+                >
+                    ☰
+                </button>
+
+                <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
                     <li>
-                        <Link to="/">Strona główna</Link>
+                        <Link to="/" onClick={closeMenu}>
+                            Strona główna
+                        </Link>
                     </li>
 
                     <li>
-                        <Link to="/gallery">Galeria</Link>
+                        <Link to="/gallery" onClick={closeMenu}>
+                            Galeria
+                        </Link>
                     </li>
 
                     <li>
-                        <Link to="/cooperation">Współpraca</Link>
+                        <Link to="/cooperation" onClick={closeMenu}>
+                            Współpraca
+                        </Link>
                     </li>
 
                     <li>
-                        <Link to="/about">O artystce</Link>
+                        <Link to="/about" onClick={closeMenu}>
+                            O artystce
+                        </Link>
                     </li>
 
                     <li>
-                        <Link to="/contact">Kontakt</Link>
+                        <Link to="/contact" onClick={closeMenu}>
+                            Kontakt
+                        </Link>
                     </li>
                 </ul>
             </nav>

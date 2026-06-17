@@ -15,9 +15,12 @@ body {
     background-color: #111;
     color: white;
     padding: 10px 40px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    position: relative;
 }
 
 .logo-link {
@@ -40,19 +43,25 @@ body {
 
 .nav-links {
     list-style: none;
+
     display: flex;
     gap: 45px;
+
     margin: 0;
     padding: 0;
+
     align-items: center;
 }
 
 .nav-links a {
     color: white;
+
     text-decoration: none;
+
     font-weight: 600;
     font-size: 20px;
     letter-spacing: 0.5px;
+
     transition: all 0.3s ease;
 }
 
@@ -61,24 +70,43 @@ body {
     transform: translateY(-2px);
 }
 
+.hamburger {
+    display: none;
+
+    background: none;
+    border: none;
+
+    color: white;
+    font-size: 34px;
+
+    cursor: pointer;
+}
+
 /* HOME */
 
 .hero {
     min-height: 520px;
+
     background-size: cover;
     background-position: center;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     text-align: center;
+
     position: relative;
 }
 
 .hero::after {
     content: "";
+
     position: absolute;
+
     bottom: -60px;
     left: 0;
+
     width: 100%;
     height: 120px;
 
@@ -123,24 +151,31 @@ body {
     font-weight: bold;
     border: none;
     cursor: pointer;
-}
 
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
 .hero-button:hover {
     background-color: #b8942d;
 }
 
 .home-section {
     padding: 100px 20px;
+
     text-align: center;
+
     background: #f4efe7;
+
     position: relative;
 }
 
 .home-section::before {
     content: "";
+
     position: absolute;
+
     top: -120px;
     left: 0;
+
     width: 100%;
     height: 120px;
 
@@ -156,14 +191,19 @@ body {
 .home-section h2 {
     font-family: Georgia, serif;
     font-size: 36px;
+
     margin-bottom: 40px;
+
     position: relative;
+
     padding-bottom: 20px;
 }
 
 .home-section h2::after {
     content: "";
+
     position: absolute;
+
     bottom: 0;
     left: 50%;
 
@@ -180,12 +220,14 @@ body {
     justify-content: center;
     gap: 35px;
     flex-wrap: wrap;
+
     margin-top: 35px;
 }
 
 .feature-card {
     width: 320px;
     min-height: 220px;
+
     padding: 40px 30px;
 
     background: #faf6ef;
@@ -246,6 +288,7 @@ body {
     justify-content: center;
     gap: 30px;
     flex-wrap: wrap;
+
     padding: 30px;
 }
 
@@ -358,17 +401,22 @@ body {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+
     margin: 30px 0;
 }
 
 .category-filters button {
     padding: 12px 24px;
+
     border: 1px solid #d4af37;
+    border-radius: 4px;
+
     background-color: white;
     color: #111;
+
     font-weight: bold;
+
     cursor: pointer;
-    border-radius: 4px;
 }
 
 .category-filters button:hover {
@@ -383,12 +431,14 @@ body {
 .search-box {
     display: flex;
     justify-content: center;
+
     margin: 25px 0;
 }
 
 .search-box input {
     width: 350px;
     max-width: 90%;
+
     padding: 14px 18px;
 
     border: 1px solid #d4af37;
@@ -431,6 +481,7 @@ body {
 
 .products-count {
     text-align: center;
+
     margin: 20px 0;
 
     color: #8a6d1d;
@@ -441,7 +492,9 @@ body {
 
 .empty-category {
     width: 100%;
+
     padding: 60px 20px;
+
     text-align: center;
 }
 
@@ -460,6 +513,7 @@ body {
 
 .modal-overlay {
     position: fixed;
+
     top: 0;
     left: 0;
     right: 0;
@@ -473,6 +527,7 @@ body {
 
     z-index: 9999;
 }
+
 .modal-image {
     max-width: 90%;
     max-height: 90%;
@@ -482,9 +537,9 @@ body {
     box-shadow: 0 0 40px rgba(255,255,255,0.25);
 }
 
-
 .modal-close {
     position: fixed;
+
     top: 25px;
     right: 40px;
 
@@ -495,6 +550,42 @@ body {
     cursor: pointer;
 
     z-index: 10000;
+}
+
+.modal-arrow {
+    position: fixed;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 55px;
+    height: 55px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.18);
+    color: white;
+
+    font-size: 42px;
+    line-height: 45px;
+
+    cursor: pointer;
+
+    z-index: 10001;
+}
+
+.modal-arrow:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+.modal-arrow-left {
+    left: 40px;
+}
+
+.modal-arrow-right {
+    right: 40px;
 }
 
 /* O ARTYSTCE */
@@ -515,6 +606,7 @@ body {
 
 .about-content {
     max-width: 600px;
+
     padding: 50px;
 
     background: rgba(30, 30, 30, 0.35);
@@ -597,6 +689,7 @@ body {
 .product-info h1 {
     font-family: Georgia, serif;
     font-size: 48px;
+
     margin-bottom: 20px;
 }
 
@@ -610,9 +703,9 @@ body {
     font-size: 36px;
 }
 
-
 .product-meta {
     margin-bottom: 25px;
+
     padding: 15px;
 
     background: #faf7f1;
@@ -626,6 +719,16 @@ body {
     font-size: 18px;
 }
 
+.artwork-label {
+    color: #8a6d1d;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
 .carousel {
     position: relative;
 
@@ -636,7 +739,9 @@ body {
 
 .carousel-arrow {
     position: absolute;
+
     top: 50%;
+
     transform: translateY(-50%);
 
     width: 45px;
@@ -671,9 +776,10 @@ body {
 .product-thumbnails {
     display: flex;
     gap: 12px;
-    margin-top: 15px;
     justify-content: center;
     flex-wrap: wrap;
+
+    margin-top: 15px;
 }
 
 .product-thumbnails img {
@@ -686,6 +792,7 @@ body {
 
     border-radius: 6px;
     opacity: 0.65;
+
     border: 2px solid transparent;
 }
 
@@ -698,12 +805,12 @@ body {
     border: 2px solid #d4af37 !important;
 }
 
-
 /* FOOTER */
 
 .footer {
     background: #111;
     color: white;
+
     margin-top: 80px;
 }
 
@@ -778,7 +885,9 @@ body {
 .cooperation-intro {
     font-size: 20px;
     line-height: 1.8;
+
     max-width: 900px;
+
     margin: 0 auto 50px;
 }
 
@@ -833,6 +942,7 @@ body {
 .cooperation-contact h2 {
     font-family: Georgia, serif;
     color: #8a6d1d;
+
     margin-bottom: 20px;
 }
 
@@ -877,8 +987,41 @@ body {
 }
 
 @media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        padding: 12px 20px;
+        gap: 10px;
+    }
+
+    .hamburger {
+        display: block;
+
+        position: absolute;
+
+        right: 25px;
+        top: 32px;
+    }
+
     .navbar-logo {
-        height: 70px;
+        height: 75px;
+    }
+
+    .nav-links {
+        display: none;
+
+        width: 100%;
+
+        flex-direction: column;
+
+        gap: 15px;
+
+        margin-top: 15px;
+
+        text-align: center;
+    }
+
+    .nav-links.open {
+        display: flex;
     }
 
     .nav-links a {
@@ -891,6 +1034,7 @@ body {
 
     .hero-content h1 {
         font-size: 36px;
+        line-height: 1.1;
     }
 
     .hero-content h2 {
@@ -912,49 +1056,28 @@ body {
         width: 85%;
     }
 
+    .modal-arrow {
+        width: 42px;
+        height: 42px;
+
+        font-size: 32px;
+        line-height: 36px;
+    }
+
+    .modal-arrow-left {
+        left: 12px;
+    }
+
+    .modal-arrow-right {
+        right: 12px;
+    }
+
     .footer-content {
         flex-direction: column;
         text-align: center;
     }
+	
+	.hero-content {
+    padding-bottom: 80px;
 }
-
-.artwork-label {
-    color: #8a6d1d;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.modal-arrow {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-
-    width: 55px;
-    height: 55px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.18);
-    color: white;
-
-    font-size: 42px;
-    line-height: 45px;
-
-    cursor: pointer;
-
-    z-index: 10001;
-}
-
-.modal-arrow:hover {
-    background: rgba(255,255,255,0.35);
-}
-
-.modal-arrow-left {
-    left: 40px;
-}
-
-.modal-arrow-right {
-    right: 40px;
 }
