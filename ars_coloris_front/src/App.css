@@ -1081,3 +1081,35 @@ body {
     padding-bottom: 80px;
 }
 }
+
+.scroll-top-button {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    width: 55px;
+    height: 55px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #d4af37;
+    color: #111;
+
+    font-size: 28px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+
+    z-index: 9999;
+
+    transition: all 0.3s ease;
+}
+
+.scroll-top-button:hover {
+    transform: translateY(-4px);
+    background: #b8942d;
+}

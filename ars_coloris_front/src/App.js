@@ -10,6 +10,8 @@ import Footer from "./components/Footer";
 
 import Cooperation from "./pages/Cooperation";
 
+import ScrollToTopButton from "./components/ScrollToTopButton";
+
 
 import "./App.css";
 
@@ -27,6 +29,7 @@ function App() {
 				<Route path="/Cooperation" element={<Cooperation />} />
             </Routes>
 			<Footer />
+			<ScrollToTopButton />
         </BrowserRouter>
     );
 }
