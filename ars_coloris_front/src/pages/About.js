@@ -28,11 +28,8 @@ function About() {
                 </p>
 				
 				<div className="artist-quote">
-    „Nie ma życia bez pieprzenia 😂
-    <br />
-	    Mozaiki ogląda się z daleka.”
-	<br /><br />
-	"Asfalt qrde ciężko zedrzeć !!!"
+    Delikatne odcienie szkła i organiczne, wydłużone tessury tworzą styl, który staje się własnym językiem artystycznym Ars Coloris. Każdy element ma znaczenie — musi grać, współgrać i tworzyć spójną całość.
+	<br />
 	<br />
 </div>
             </div>

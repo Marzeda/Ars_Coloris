@@ -13,7 +13,6 @@ function Gallery() {
         "Mozaiki ścienne",
         "Stoliki mozaikowe",
         "Mozaiki ogrodowe",
-        "Zamówienia indywidualne",
     ];
 
     const getCategoryCount = (category) => {
@@ -26,9 +25,9 @@ function Gallery() {
         ).length;
     };
 
-    const getProductsText = (count) => {
+    const getWorksText = (count) => {
         if (count === 1) {
-            return "produkt";
+            return "pracę";
         }
 
         if (
@@ -36,10 +35,10 @@ function Gallery() {
             count % 10 <= 4 &&
             (count % 100 < 12 || count % 100 > 14)
         ) {
-            return "produkty";
+            return "prace";
         }
 
-        return "produktów";
+        return "prac";
     };
 
     const filteredProducts = products.filter((product) => {
@@ -55,21 +54,10 @@ function Gallery() {
     });
 
     const sortedProducts = [...filteredProducts].sort((a, b) => {
-        if (sortOption === "name-asc") {
-            return a.name.localeCompare(b.name);
-        }
-
-        if (sortOption === "name-desc") {
-            return b.name.localeCompare(a.name);
-        }
-
-        if (sortOption === "price-asc") {
-            return a.price - b.price;
-        }
-
-        if (sortOption === "price-desc") {
-            return b.price - a.price;
-        }
+        if (sortOption === "name-asc") return a.name.localeCompare(b.name);
+        if (sortOption === "name-desc") return b.name.localeCompare(a.name);
+        if (sortOption === "price-asc") return a.price - b.price;
+        if (sortOption === "price-desc") return b.price - a.price;
 
         return 0;
     });
@@ -97,7 +85,7 @@ function Gallery() {
             <div className="search-box">
                 <input
                     type="text"
-                    placeholder="🔍 Szukaj produktu..."
+                    placeholder="Szukaj mozaiki..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -120,8 +108,8 @@ function Gallery() {
 
             <p className="products-count">
                 {sortedProducts.length === 0
-                    ? "Nie znaleziono produktów"
-                    : `Znaleziono ${sortedProducts.length} ${getProductsText(
+                    ? "Nie znaleziono prac"
+                    : `Znaleziono ${sortedProducts.length} ${getWorksText(
                           sortedProducts.length
                       )}`}
             </p>
@@ -129,43 +117,42 @@ function Gallery() {
             <div className="products">
                 {sortedProducts.length === 0 && (
                     <div className="empty-category">
-                        <h2>Produkty w przygotowaniu</h2>
+                        <h2>Prace w przygotowaniu</h2>
 
                         <p>
-                            Aktualnie nie ma jeszcze produktów w tej kategorii.
+                            Aktualnie nie ma jeszcze prac w tej kategorii.
                             Zapraszamy ponownie wkrótce.
                         </p>
                     </div>
                 )}
 
                 {sortedProducts.map((product) => (
-                   <div className="product-card" key={product.id}>
-    {product.isNew && (
-        <div className="product-badge">
-            NOWOŚĆ
-        </div>
-    )}
-
-    <Link to={`/product/${product.id}`}>
-        <img
-            src={product.images[0]}
-            alt={product.name}
-        />
-    </Link>
-
-
-				<h3>{product.name}</h3>
-
-				<p className="product-category">
-					🏷️ {product.category}
-				</p>
-
-				<p className="product-price">
-					{product.price} zł
-				</p>
+                    <div className="product-card" key={product.id}>
+                        {product.isNew && (
+                            <div className="product-badge">
+                                NOWOŚĆ
+                            </div>
+                        )}
 
                         <Link to={`/product/${product.id}`}>
-                            <button>Zobacz produkt</button>
+                            <img
+                                src={product.images[0]}
+                                alt={product.name}
+                            />
+                        </Link>
+
+                        <h3>{product.name}</h3>
+
+                        <p className="product-category">
+                            {product.category}
+                        </p>
+
+                        <p className="product-price">
+                            {product.price} zł
+                        </p>
+
+                        <Link to={`/product/${product.id}`}>
+                            <button>Zobacz pracę</button>
                         </Link>
                     </div>
                 ))}

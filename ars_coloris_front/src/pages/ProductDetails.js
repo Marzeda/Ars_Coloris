@@ -1,9 +1,8 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import products from "../data/products";
 import ImageModal from "../components/ImageModal";
-import { CartContext } from "../context/CartContext";
 
 function ProductDetails() {
     const { id } = useParams();
@@ -11,16 +10,7 @@ function ProductDetails() {
     const product = products.find((item) => item.id === Number(id));
 
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [modalImage, setModalImage] = useState(null);
-	const [added, setAdded] = useState(false);
-	const { addToCart } = useContext(CartContext);
-	const handleAddToCart = () => {
-		addToCart(product);
-		setAdded(true);
-		setTimeout(() => {
-			setAdded(false);
-		}, 1500);
-	};
+	const [modalIndex, setModalIndex] = useState(null);
 
     if (!product) {
         return <h1>Nie znaleziono produktu</h1>;
@@ -50,7 +40,7 @@ function ProductDetails() {
                         src={currentImage}
                         alt={product.name}
                         className="product-main-image"
-                        onClick={() => setModalImage(currentImage)}
+                        onClick={() => setModalIndex(currentIndex)}
                     />
 
                     <button className="carousel-arrow right" onClick={nextImage}>
@@ -64,43 +54,50 @@ function ProductDetails() {
                             key={index}
                             src={image}
                             alt={`${product.name} ${index + 1}`}
-                            className={index === currentIndex ? "active-thumbnail" : ""}
+                            className={
+                                index === currentIndex ? "active-thumbnail" : ""
+                            }
                             onClick={() => setCurrentIndex(index)}
                         />
                     ))}
                 </div>
             </div>
 
-            <div className="product-info">
-                <h1>{product.name}</h1>
+           
+		<div className="product-info">
+			<h1>{product.name}</h1>
 
-                <div className="product-meta">
-                    <p><strong>Kategoria:</strong> {product.category}</p>
+			<div className="product-meta">
+				<p>
+					<strong>Kategoria:</strong> {product.category}
+				</p>
+			</div>
 
-                    <p>
-                        <strong>Dostępność:</strong>
-                        <span className="available"> ✓ {product.availability}</span>
-                    </p>
+			<p className="artwork-label">
+				Mozaika autorska
+			</p>
 
-                    <p><strong>Czas realizacji:</strong> {product.deliveryTime}</p>
-                </div>
+			<p>{product.description}</p>
 
-                <p>{product.description}</p>
-
-                <h2>{product.price} zł</h2>
-
-                <button 
-					className={added ? "added-button" : ""}
-					onClick={handleAddToCart}
-				>
-					{added ? "✓ Dodano" : "Dodaj do koszyka"}
-				</button>
-            </div>
+			<h2>{product.price} zł</h2>
+		</div>
+				   
 
             <ImageModal
-                image={modalImage}
-                onClose={() => setModalImage(null)}
-            />
+    images={product.images}
+    currentIndex={modalIndex}
+    onClose={() => setModalIndex(null)}
+    onNext={() =>
+        setModalIndex((modalIndex + 1) % product.images.length)
+    }
+    onPrevious={() =>
+        setModalIndex(
+            modalIndex === 0
+                ? product.images.length - 1
+                : modalIndex - 1
+        )
+    }
+/>
         </div>
     );
 }

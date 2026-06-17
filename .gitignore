@@ -3,6 +3,9 @@ node_modules/
 ars_coloris_front/node_modules/
 ars_coloris_back/node_modules/
 
+#temp
+temp/
+
 # Environment
 .env
 

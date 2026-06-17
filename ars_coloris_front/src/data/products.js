@@ -36,7 +36,6 @@ const products = [
         id: 3,
         name: "Stolik Flora",
         category: "Stoliki mozaikowe",
-		isNew: true,
         price: 950,
 		availability: "Dostępny",
 		deliveryTime: "3-5 dni roboczych",
