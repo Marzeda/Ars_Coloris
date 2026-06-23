@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "admin123",
+    "role": "admin",
+    "failedLoginAttempts": 0,
+    "lockUntil": null
+  },
+  {
+    "id": 2,
+    "username": "agnieszka",
+    "password": "aga123",
+    "role": "artist",
+    "failedLoginAttempts": 0,
+    "lockUntil": null
+  }
+]

@@ -12,6 +12,11 @@ import Projects from "./pages/Projects";
 import Cooperation from "./pages/Cooperation";
 import Contact from "./pages/Contact";
 import ProductDetails from "./pages/ProductDetails";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
+import Artist from "./pages/Artist";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
@@ -30,6 +35,26 @@ function App() {
                 <Route path="/cooperation" element={<Cooperation />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/login" element={<Login />} />
+
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute allowedRole="admin">
+                            <Admin />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/artist"
+                    element={
+                        <ProtectedRoute allowedRole="artist">
+                            <Artist />
+                        </ProtectedRoute>
+                    }
+                />
+
             </Routes>
 
             <Footer />

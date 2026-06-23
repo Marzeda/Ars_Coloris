@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import products from "../data/products";
+const API_URL = "http://localhost:5000";
 
 function Gallery() {
+    const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
     const [sortOption, setSortOption] = useState("default");
     const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        fetch(`${API_URL}/api/products`)
+            .then((res) => res.json())
+            .then((data) => setProducts(data))
+            .catch((err) => console.error("Błąd pobierania produktów:", err));
+    }, []);
 
     const categories = [
         "Wszystkie",
@@ -14,6 +22,18 @@ function Gallery() {
         "Stoliki mozaikowe",
         "Mozaiki ogrodowe",
     ];
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) {
+            return "";
+        }
+
+        if (imagePath.startsWith("http")) {
+            return imagePath;
+        }
+
+        return `${API_URL}${imagePath}`;
+    };
 
     const getCategoryCount = (category) => {
         if (category === "Wszystkie") {
@@ -110,8 +130,8 @@ function Gallery() {
                 {sortedProducts.length === 0
                     ? "Nie znaleziono prac"
                     : `Znaleziono ${sortedProducts.length} ${getWorksText(
-                          sortedProducts.length
-                      )}`}
+                        sortedProducts.length
+                    )}`}
             </p>
 
             <div className="products">
@@ -135,10 +155,16 @@ function Gallery() {
                         )}
 
                         <Link to={`/product/${product.id}`}>
-                            <img
-                                src={product.images[0]}
-                                alt={product.name}
-                            />
+                            {product.images && product.images.length > 0 ? (
+                                <img
+                                    src={getImageUrl(product.images[0])}
+                                    alt={product.name}
+                                />
+                            ) : (
+                                <div className="product-no-image">
+                                    Brak zdjęcia
+                                </div>
+                            )}
                         </Link>
 
                         <h3>{product.name}</h3>

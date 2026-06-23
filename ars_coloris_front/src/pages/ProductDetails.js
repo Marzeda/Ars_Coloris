@@ -1,16 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import products from "../data/products";
 import ImageModal from "../components/ImageModal";
+
+const API_URL = "http://localhost:5000";
+const LOGO_IMAGE = `${API_URL}/uploads/logo/ars-coloris-logo.jpg`;
 
 function ProductDetails() {
     const { id } = useParams();
 
-    const product = products.find((item) => item.id === Number(id));
-
+    const [product, setProduct] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
-	const [modalIndex, setModalIndex] = useState(null);
+    const [modalIndex, setModalIndex] = useState(null);
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) {
+            return "";
+        }
+
+        if (imagePath.startsWith("http")) {
+            return imagePath;
+        }
+
+        return `${API_URL}${imagePath}`;
+    };
+
+    useEffect(() => {
+        fetch(`${API_URL}/api/products/${id}`)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Nie znaleziono produktu");
+                }
+
+                return res.json();
+            })
+            .then((foundProduct) => {
+                const productImages = foundProduct.images || [];
+
+                const imagesWithLogo = [
+                    ...productImages.map((image) => getImageUrl(image)),
+                    LOGO_IMAGE
+                ];
+
+                setProduct({
+                    ...foundProduct,
+                    images: imagesWithLogo
+                });
+
+                setCurrentIndex(0);
+                setModalIndex(null);
+            })
+            .catch((err) => {
+                console.error("Błąd pobierania produktu:", err);
+                setProduct(null);
+            });
+    }, [id]);
 
     if (!product) {
         return <h1>Nie znaleziono produktu</h1>;
@@ -32,7 +76,10 @@ function ProductDetails() {
         <div className="product-details">
             <div className="product-gallery">
                 <div className="carousel">
-                    <button className="carousel-arrow left" onClick={previousImage}>
+                    <button
+                        className="carousel-arrow left"
+                        onClick={previousImage}
+                    >
                         ‹
                     </button>
 
@@ -43,7 +90,10 @@ function ProductDetails() {
                         onClick={() => setModalIndex(currentIndex)}
                     />
 
-                    <button className="carousel-arrow right" onClick={nextImage}>
+                    <button
+                        className="carousel-arrow right"
+                        onClick={nextImage}
+                    >
                         ›
                     </button>
                 </div>
@@ -55,7 +105,9 @@ function ProductDetails() {
                             src={image}
                             alt={`${product.name} ${index + 1}`}
                             className={
-                                index === currentIndex ? "active-thumbnail" : ""
+                                index === currentIndex
+                                    ? "active-thumbnail"
+                                    : ""
                             }
                             onClick={() => setCurrentIndex(index)}
                         />
@@ -63,41 +115,47 @@ function ProductDetails() {
                 </div>
             </div>
 
-           
-		<div className="product-info">
-			<h1>{product.name}</h1>
+            <div className="product-info">
+                <h1>{product.name}</h1>
 
-			<div className="product-meta">
-				<p>
-					<strong>Kategoria:</strong> {product.category}
-				</p>
-			</div>
+                <div className="product-meta">
+                    <p>
+                        <strong>Kategoria:</strong> {product.category}
+                    </p>
 
-			<p className="artwork-label">
-				Mozaika autorska
-			</p>
+                    <p>
+                        <strong>Dostępność:</strong> {product.availability}
+                    </p>
 
-			<p>{product.description}</p>
+                    <p>
+                        <strong>Czas realizacji:</strong> {product.deliveryTime}
+                    </p>
+                </div>
 
-			<h2>{product.price} zł</h2>
-		</div>
-				   
+                <p className="artwork-label">
+                    Mozaika autorska
+                </p>
+
+                <p>{product.description}</p>
+
+                <h2>{product.price} zł</h2>
+            </div>
 
             <ImageModal
-    images={product.images}
-    currentIndex={modalIndex}
-    onClose={() => setModalIndex(null)}
-    onNext={() =>
-        setModalIndex((modalIndex + 1) % product.images.length)
-    }
-    onPrevious={() =>
-        setModalIndex(
-            modalIndex === 0
-                ? product.images.length - 1
-                : modalIndex - 1
-        )
-    }
-/>
+                images={product.images}
+                currentIndex={modalIndex}
+                onClose={() => setModalIndex(null)}
+                onNext={() =>
+                    setModalIndex((modalIndex + 1) % product.images.length)
+                }
+                onPrevious={() =>
+                    setModalIndex(
+                        modalIndex === 0
+                            ? product.images.length - 1
+                            : modalIndex - 1
+                    )
+                }
+            />
         </div>
     );
 }

@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "name": "Złota Harmonia",
+    "category": "Mozaiki ścienne",
+    "price": 999,
+    "availability": "Na zamówienie",
+    "deliveryTime": "3-15 dni roboczych",
+    "images": [
+      "/uploads/products/zlota-harmonia/1.jpg"
+    ],
+    "description": "Ręcznie wykonana mozaika w odcieniach turkusu, złota i błękitu."
+  },
+  {
+    "id": 2,
+    "name": "Ptaki wśród liści",
+    "category": "Mozaiki ścienne",
+    "price": 1279,
+    "availability": "Dostępny",
+    "deliveryTime": "3-5 dni roboczych",
+    "images": [
+      "/uploads/products/ptaki-wsrod-lisci/1.jpg"
+    ],
+    "description": "Dekoracyjna mozaika inspirowana naturą i lekkością ptasich kształtów."
+  },
+  {
+    "id": 3,
+    "name": "Stolik Flora",
+    "category": "Stoliki mozaikowe",
+    "price": 950,
+    "availability": "Dostępny",
+    "deliveryTime": "3-5 dni roboczych",
+    "images": [
+      "/uploads/products/stolik-flora/1.jpg"
+    ],
+    "description": "Elegancki stolik mozaikowy z motywem roślinnym, idealny do wnętrza lub ogrodu."
+  },
+  {
+    "id": 4,
+    "name": "Stolik Szept Lata",
+    "category": "Stoliki mozaikowe",
+    "price": 890,
+    "availability": "Dostępny",
+    "deliveryTime": "3-5 dni roboczych",
+    "images": [
+      "/uploads/products/stolik-szept-lata/2.jpg",
+      "/uploads/products/stolik-szept-lata/1.jpg"
+    ],
+    "description": "Stolik mozaikowy z kwiatowym motywem inspirowanym letnim ogrodem."
+  },
+  {
+    "id": 5,
+    "name": "Nowy produkt testowy",
+    "category": "Mozaiki ścienne",
+    "price": 1232,
+    "availability": "Dostępny",
+    "deliveryTime": "3-5 dni roboczych",
+    "images": [
+      "/uploads/products/nowy-produkt-testowy/1782238653932-20240628_143323.jpg",
+      "/uploads/products/nowy-produkt-testowy/1782238653937-noveen.jpg",
+      "/uploads/products/nowy-produkt-testowy/1782238640857-zrzut-ekranu-2025-04-28-144346.jpg"
+    ],
+    "description": "asdfasdfasdfasdf"
+  }
+]
