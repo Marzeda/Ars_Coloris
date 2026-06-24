@@ -24,6 +24,10 @@ function Admin() {
             );
     }, []);
 
+    const getToken = () => {
+        return localStorage.getItem("token");
+    };
+
     const getImageUrl = (imagePath) => {
         if (!imagePath) {
             return "";
@@ -38,6 +42,7 @@ function Admin() {
 
     const handleLogout = () => {
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         navigate("/login");
     };
 
@@ -89,7 +94,10 @@ function Admin() {
             const response = await fetch(
                 `${API_URL}/api/products/${productToDelete.id}`,
                 {
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`
+                    }
                 }
             );
 

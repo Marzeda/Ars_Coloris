@@ -11,6 +11,8 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        setError("");
+
         try {
             const response = await fetch(
                 "http://localhost:5000/api/login",
@@ -38,13 +40,23 @@ function Login() {
                 JSON.stringify(data.user)
             );
 
+            localStorage.setItem(
+                "token",
+                data.token
+            );
+
             if (data.user.role === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/artist");
             }
+
         } catch (err) {
-            setError("Błąd połączenia z serwerem");
+            console.error(err);
+
+            setError(
+                "Błąd połączenia z serwerem"
+            );
         }
     };
 
@@ -56,12 +68,14 @@ function Login() {
                 <div>
                     <label>Login</label>
                     <br />
+
                     <input
                         type="text"
                         value={username}
                         onChange={(e) =>
                             setUsername(e.target.value)
                         }
+                        required
                     />
                 </div>
 
@@ -70,12 +84,14 @@ function Login() {
                 <div>
                     <label>Hasło</label>
                     <br />
+
                     <input
                         type="password"
                         value={password}
                         onChange={(e) =>
                             setPassword(e.target.value)
                         }
+                        required
                     />
                 </div>
 

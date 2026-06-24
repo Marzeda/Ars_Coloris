@@ -2,16 +2,18 @@
   {
     "id": 1,
     "username": "admin",
+    "email": "marzedat@gmail.com",
     "password": "$2b$10$W4FYhPkt5WdFZiRosX7kPuZvx63AlApNYqLuLWEL8zNyZSPJVqF5i",
     "role": "admin",
     "failedLoginAttempts": 0,
     "lockUntil": null,
-    "resetToken": null,
-    "resetTokenExpires": null
+    "resetToken": "5137461d580b713d0ae976f2ee6c84e50c1ffa07dc78d217eb71210d19cb1e8d",
+    "resetTokenExpires": 1782296623691
   },
   {
     "id": 2,
     "username": "agnieszka",
+    "email": "marzedat@gmail.com",
     "password": "$2b$10$Zq3jQheR6DdZpN8i2axmqOkWAA/sVFvB61SqcQfouVm1EFmGg3jRe",
     "role": "artist",
     "failedLoginAttempts": 0,

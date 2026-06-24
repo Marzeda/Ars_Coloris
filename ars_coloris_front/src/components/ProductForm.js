@@ -45,6 +45,10 @@ function ProductForm({
         return `${API_URL}${imagePath}`;
     };
 
+    const getToken = () => {
+        return localStorage.getItem("token");
+    };
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -80,6 +84,9 @@ function ProductForm({
             `${API_URL}/api/products/${productId}/images`,
             {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                },
                 body: uploadData
             }
         );
@@ -97,7 +104,8 @@ function ProductForm({
             {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
                 },
                 body: JSON.stringify({
                     imagePath
@@ -127,7 +135,8 @@ function ProductForm({
             {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
                 },
                 body: JSON.stringify({
                     imagePath
@@ -169,7 +178,8 @@ function ProductForm({
         const response = await fetch(url, {
             method,
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`
             },
             body: JSON.stringify(productData)
         });
@@ -177,6 +187,7 @@ function ProductForm({
         const data = await response.json();
 
         if (!response.ok) {
+            alert(data.message || "Wystąpił błąd zapisu produktu.");
             return;
         }
 

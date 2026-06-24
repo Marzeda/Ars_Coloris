@@ -49,17 +49,17 @@
     "description": "Stolik mozaikowy z kwiatowym motywem inspirowanym letnim ogrodem."
   },
   {
-    "id": 5,
-    "name": "Nowy produkt testowy",
-    "category": "Mozaiki ścienne",
-    "price": 1232,
+    "id": 6,
+    "name": "kolejny nowy produkt",
+    "category": "Stoliki mozaikowe",
+    "price": 32129,
     "availability": "Dostępny",
-    "deliveryTime": "3-5 dni roboczych",
+    "deliveryTime": "2 tygodnie ",
     "images": [
-      "/uploads/products/nowy-produkt-testowy/1782238653932-20240628_143323.jpg",
-      "/uploads/products/nowy-produkt-testowy/1782238653937-noveen.jpg",
-      "/uploads/products/nowy-produkt-testowy/1782238640857-zrzut-ekranu-2025-04-28-144346.jpg"
+      "/uploads/products/kolejny-nowy-produkt/1782313713205-zrzut-ekranu-(3).png",
+      "/uploads/products/kolejny-nowy-produkt/1782313713153-zrzut-ekranu-(1).png",
+      "/uploads/products/kolejny-nowy-produkt/1782313713185-zrzut-ekranu-(2).png"
     ],
-    "description": "asdfasdfasdfasdf"
+    "description": "to jest bardzo fajny produkt jego widok dosłownie zachwyca"
   }
 ]

@@ -1,5 +1,8 @@
 const crypto = require("crypto");
 
+const nodemailer = require("nodemailer");
+const { createTransporter } = require("./mail");
+
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -7,6 +10,7 @@ const path = require("path");
 const multer = require("multer");
 
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -17,6 +21,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const productsPath = path.join(__dirname, "data", "products.json");
 const usersPath = path.join(__dirname, "data", "users.json");
+
+const JWT_SECRET = "ars_coloris_secret_key";
 
 const readProducts = () => {
     const data = fs.readFileSync(productsPath, "utf8");
@@ -42,6 +48,41 @@ const saveUsers = (users) => {
         JSON.stringify(users, null, 2),
         "utf8"
     );
+};
+
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({
+            success: false,
+            message: "Brak tokenu"
+        });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(403).json({
+            success: false,
+            message: "Nieprawidłowy token"
+        });
+    }
+};
+
+const verifyAdmin = (req, res, next) => {
+    if (req.user.role !== "admin") {
+        return res.status(403).json({
+            success: false,
+            message: "Brak uprawnień"
+        });
+    }
+
+    next();
 };
 
 const createSlug = (text) => {
@@ -132,7 +173,7 @@ app.get("/api/products/:id", (req, res) => {
     }
 });
 
-app.post("/api/products", (req, res) => {
+app.post("/api/products", verifyToken, verifyAdmin, (req, res) => {
     try {
         const products = readProducts();
 
@@ -166,7 +207,7 @@ app.post("/api/products", (req, res) => {
     }
 });
 
-app.put("/api/products/:id", (req, res) => {
+app.put("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const products = readProducts();
@@ -198,7 +239,7 @@ app.put("/api/products/:id", (req, res) => {
     }
 });
 
-app.put("/api/products/:id/main-image", (req, res) => {
+app.put("/api/products/:id/main-image", verifyToken, verifyAdmin, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const { imagePath } = req.body;
@@ -244,7 +285,7 @@ app.put("/api/products/:id/main-image", (req, res) => {
     }
 });
 
-app.delete("/api/products/:id", (req, res) => {
+app.delete("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const products = readProducts();
@@ -279,6 +320,8 @@ app.delete("/api/products/:id", (req, res) => {
 
 app.post(
     "/api/products/:id/images",
+    verifyToken,
+    verifyAdmin,
     upload.array("images", 10),
     (req, res) => {
         try {
@@ -321,56 +364,61 @@ app.post(
     }
 );
 
-app.delete("/api/products/:id/images", (req, res) => {
-    try {
-        const productId = Number(req.params.id);
-        const { imagePath } = req.body;
+app.delete(
+    "/api/products/:id/images",
+    verifyToken,
+    verifyAdmin,
+    (req, res) => {
+        try {
+            const productId = Number(req.params.id);
+            const { imagePath } = req.body;
 
-        const products = readProducts();
+            const products = readProducts();
 
-        const productIndex = products.findIndex(
-            (product) => product.id === productId
-        );
+            const productIndex = products.findIndex(
+                (product) => product.id === productId
+            );
 
-        if (productIndex === -1) {
-            return res.status(404).json({
-                message: "Nie znaleziono produktu"
+            if (productIndex === -1) {
+                return res.status(404).json({
+                    message: "Nie znaleziono produktu"
+                });
+            }
+
+            const product = products[productIndex];
+
+            product.images = product.images.filter(
+                (image) => image !== imagePath
+            );
+
+            saveProducts(products);
+
+            const fullPath = path.join(
+                __dirname,
+                imagePath.replace(/^\//, "")
+            );
+
+            if (fs.existsSync(fullPath)) {
+                fs.unlinkSync(fullPath);
+            }
+
+            res.json({
+                success: true,
+                message: "Zdjęcie zostało usunięte",
+                images: product.images
+            });
+        } catch (err) {
+            console.error(err);
+
+            res.status(500).json({
+                success: false,
+                message: "Błąd usuwania zdjęcia"
             });
         }
-
-        const product = products[productIndex];
-
-        product.images = product.images.filter(
-            (image) => image !== imagePath
-        );
-
-        saveProducts(products);
-
-        const fullPath = path.join(
-            __dirname,
-            imagePath.replace(/^\//, "")
-        );
-
-        if (fs.existsSync(fullPath)) {
-            fs.unlinkSync(fullPath);
-        }
-
-        res.json({
-            success: true,
-            message: "Zdjęcie zostało usunięte",
-            images: product.images
-        });
-    } catch (err) {
-        console.error(err);
-
-        res.status(500).json({
-            success: false,
-            message: "Błąd usuwania zdjęcia"
-        });
     }
-});
+);
 
-app.get("/api/users", (req, res) => {
+app.get("/api/users", verifyToken, verifyAdmin, (req, res) => {
     try {
         const users = readUsers();
         res.json(users);
@@ -381,7 +429,7 @@ app.get("/api/users", (req, res) => {
     }
 });
 
-app.post("/api/login", async(req, res) => {
+app.post("/api/login", async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -412,8 +460,6 @@ app.post("/api/login", async(req, res) => {
             });
         }
 
-
-
         const passwordMatch = await bcrypt.compare(
             password,
             user.password
@@ -441,8 +487,21 @@ app.post("/api/login", async(req, res) => {
 
         saveUsers(users);
 
+        const token = jwt.sign(
+            {
+                id: user.id,
+                username: user.username,
+                role: user.role
+            },
+            JWT_SECRET,
+            {
+                expiresIn: "2h"
+            }
+        );
+
         res.json({
             success: true,
+            token,
             user: {
                 id: user.id,
                 username: user.username,
@@ -457,7 +516,7 @@ app.post("/api/login", async(req, res) => {
     }
 });
 
-app.post("/api/forgot-password", (req, res) => {
+app.post("/api/forgot-password", async (req, res) => {
     const { username } = req.body;
 
     try {
@@ -482,10 +541,43 @@ app.post("/api/forgot-password", (req, res) => {
 
         saveUsers(users);
 
+        const resetLink =
+            `http://localhost:3000/reset-password/${resetToken}`;
+
+        const transporter =
+            await createTransporter();
+
+        const info = await transporter.sendMail({
+            from: '"Ars Coloris" <noreply@arscoloris.pl>',
+            to: users[userIndex].email || "admin@example.com",
+            subject: "Reset hasła Ars Coloris",
+            html: `
+                <h2>Reset hasła</h2>
+
+                <p>
+                    Kliknij poniższy link:
+                </p>
+
+                <a href="${resetLink}">
+                    ${resetLink}
+                </a>
+
+                <p>
+                    Link ważny jest 30 minut.
+                </p>
+            `
+        });
+
+        console.log(
+            "Preview URL:",
+            nodemailer.getTestMessageUrl(info)
+        );
+
         res.json({
             success: true,
-            message: "Token resetowania hasła został wygenerowany",
-            resetLink: `http://localhost:3000/reset-password/${resetToken}`
+            message: "Wysłano wiadomość testową",
+            previewUrl:
+                nodemailer.getTestMessageUrl(info)
         });
     } catch (err) {
         res.status(500).json({
@@ -494,7 +586,6 @@ app.post("/api/forgot-password", (req, res) => {
         });
     }
 });
-
 
 app.post("/api/reset-password", async (req, res) => {
     const { token, password } = req.body;
