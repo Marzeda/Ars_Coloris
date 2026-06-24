@@ -1591,3 +1591,17 @@ body {
     vertical-align: middle;
 }
 
+
+.forgot-password-link {
+    margin-top: 15px;
+}
+
+.forgot-password-link a {
+    color: #9a7009;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}

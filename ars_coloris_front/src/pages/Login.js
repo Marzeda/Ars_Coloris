@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -43,7 +43,6 @@ function Login() {
             } else {
                 navigate("/artist");
             }
-
         } catch (err) {
             setError("Błąd połączenia z serwerem");
         }
@@ -85,6 +84,12 @@ function Login() {
                 <button type="submit">
                     Zaloguj
                 </button>
+
+                <p className="forgot-password-link">
+                    <Link to="/forgot-password">
+                        Nie pamiętasz hasła?
+                    </Link>
+                </p>
 
                 {error && (
                     <p style={{ color: "red" }}>

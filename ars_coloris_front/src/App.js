@@ -20,6 +20,8 @@ import ResetPassword from "./pages/ResetPassword";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import ForgotPassword from "./pages/ForgotPassword";
+
 import "./App.css";
 
 function App() {
@@ -38,6 +40,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
                 <Route
                     path="/admin"
