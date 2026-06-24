@@ -4,6 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 
+const bcrypt = require("bcryptjs");
+
 const app = express();
 
 app.use(cors());
@@ -377,7 +379,7 @@ app.get("/api/users", (req, res) => {
     }
 });
 
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async(req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -408,7 +410,14 @@ app.post("/api/login", (req, res) => {
             });
         }
 
-        if (user.password !== password) {
+
+
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!passwordMatch) {
             user.failedLoginAttempts =
                 (user.failedLoginAttempts || 0) + 1;
 
@@ -445,6 +454,7 @@ app.post("/api/login", (req, res) => {
         });
     }
 });
+
 
 const PORT = 5000;
 

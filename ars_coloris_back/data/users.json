@@ -2,7 +2,7 @@
   {
     "id": 1,
     "username": "admin",
-    "password": "admin123",
+    "password": "$2b$10$XlZutuqISay5jefGRFpbYuSOzjAX5FuDWAEySRZojsNE/e9MgdpVi",
     "role": "admin",
     "failedLoginAttempts": 0,
     "lockUntil": null
@@ -10,7 +10,7 @@
   {
     "id": 2,
     "username": "agnieszka",
-    "password": "aga123",
+    "password": "$2b$10$Zq3jQheR6DdZpN8i2axmqOkWAA/sVFvB61SqcQfouVm1EFmGg3jRe",
     "role": "artist",
     "failedLoginAttempts": 0,
     "lockUntil": null

@@ -1,9 +1,7 @@
+import Admin from "./Admin";
+
 function Artist() {
-    return (
-        <div className="page">
-            <h1>Panel artysty</h1>
-        </div>
-    );
+    return <Admin />;
 }
 
 export default Artist;
