@@ -1,16 +1,20 @@
+require("dotenv").config();
+
 const crypto = require("crypto");
-
-const nodemailer = require("nodemailer");
-const { createTransporter } = require("./mail");
-
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+const { createTransporter } = require("./mail");
+const {
+    cloudinary,
+    storage: cloudinaryStorage
+} = require("./cloudinaryConfig");
 
 const app = express();
 
@@ -22,7 +26,15 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const productsPath = path.join(__dirname, "data", "products.json");
 const usersPath = path.join(__dirname, "data", "users.json");
 
-const JWT_SECRET = "ars_coloris_secret_key";
+const JWT_SECRET =
+    process.env.JWT_SECRET || "ars_coloris_secret_key";
+
+const FRONTEND_URL =
+    process.env.FRONTEND_URL || "http://localhost:3000";
+
+const upload = multer({
+    storage: cloudinaryStorage
+});
 
 const readProducts = () => {
     const data = fs.readFileSync(productsPath, "utf8");
@@ -74,6 +86,20 @@ const verifyToken = (req, res, next) => {
     }
 };
 
+const verifyPanelUser = (req, res, next) => {
+    if (
+        req.user.role !== "admin" &&
+        req.user.role !== "artist"
+    ) {
+        return res.status(403).json({
+            success: false,
+            message: "Brak uprawnień"
+        });
+    }
+
+    next();
+};
+
 const verifyAdmin = (req, res, next) => {
     if (req.user.role !== "admin") {
         return res.status(403).json({
@@ -85,55 +111,22 @@ const verifyAdmin = (req, res, next) => {
     next();
 };
 
-const createSlug = (text) => {
-    return text
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/ł/g, "l")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-};
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const productId = Number(req.params.id);
-        const products = readProducts();
-
-        const product = products.find(
-            (item) => item.id === productId
-        );
-
-        if (!product) {
-            return cb(new Error("Nie znaleziono produktu"));
-        }
-
-        const folderName = createSlug(product.name);
-        const uploadPath = path.join(
-            __dirname,
-            "uploads",
-            "products",
-            folderName
-        );
-
-        fs.mkdirSync(uploadPath, { recursive: true });
-
-        cb(null, uploadPath);
-    },
-
-    filename: (req, file, cb) => {
-        const uniqueName =
-            Date.now() +
-            "-" +
-            file.originalname
-                .toLowerCase()
-                .replace(/\s+/g, "-");
-
-        cb(null, uniqueName);
+const getCloudinaryPublicId = (imageUrl) => {
+    if (!imageUrl || !imageUrl.includes("res.cloudinary.com")) {
+        return null;
     }
-});
 
-const upload = multer({ storage });
+    const uploadPart = imageUrl.split("/upload/")[1];
+
+    if (!uploadPart) {
+        return null;
+    }
+
+    const withoutVersion = uploadPart.replace(/^v[0-9]+\//, "");
+    const withoutExtension = withoutVersion.replace(/\.[^/.]+$/, "");
+
+    return withoutExtension;
+};
 
 app.get("/", (req, res) => {
     res.send("Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech");
@@ -173,7 +166,7 @@ app.get("/api/products/:id", (req, res) => {
     }
 });
 
-app.post("/api/products", verifyToken, verifyAdmin, (req, res) => {
+app.post("/api/products", verifyToken, verifyPanelUser, (req, res) => {
     try {
         const products = readProducts();
 
@@ -207,7 +200,7 @@ app.post("/api/products", verifyToken, verifyAdmin, (req, res) => {
     }
 });
 
-app.put("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
+app.put("/api/products/:id", verifyToken, verifyPanelUser, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const products = readProducts();
@@ -239,7 +232,7 @@ app.put("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
     }
 });
 
-app.put("/api/products/:id/main-image", verifyToken, verifyAdmin, (req, res) => {
+app.put("/api/products/:id/main-image", verifyToken, verifyPanelUser, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const { imagePath } = req.body;
@@ -285,7 +278,7 @@ app.put("/api/products/:id/main-image", verifyToken, verifyAdmin, (req, res) => 
     }
 });
 
-app.delete("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
+app.delete("/api/products/:id", verifyToken, verifyPanelUser, (req, res) => {
     try {
         const productId = Number(req.params.id);
         const products = readProducts();
@@ -321,7 +314,7 @@ app.delete("/api/products/:id", verifyToken, verifyAdmin, (req, res) => {
 app.post(
     "/api/products/:id/images",
     verifyToken,
-    verifyAdmin,
+    verifyPanelUser,
     upload.array("images", 10),
     (req, res) => {
         try {
@@ -338,10 +331,8 @@ app.post(
                 });
             }
 
-            const folderName = createSlug(products[productIndex].name);
-
             const uploadedImages = req.files.map((file) => {
-                return `/uploads/products/${folderName}/${file.filename}`;
+                return file.path;
             });
 
             products[productIndex].images = [
@@ -357,6 +348,8 @@ app.post(
                 product: products[productIndex]
             });
         } catch (err) {
+            console.error(err);
+
             res.status(500).json({
                 message: "Błąd uploadu zdjęć"
             });
@@ -367,8 +360,8 @@ app.post(
 app.delete(
     "/api/products/:id/images",
     verifyToken,
-    verifyAdmin,
-    (req, res) => {
+    verifyPanelUser,
+    async (req, res) => {
         try {
             const productId = Number(req.params.id);
             const { imagePath } = req.body;
@@ -393,13 +386,19 @@ app.delete(
 
             saveProducts(products);
 
-            const fullPath = path.join(
-                __dirname,
-                imagePath.replace(/^\//, "")
-            );
+            const publicId = getCloudinaryPublicId(imagePath);
 
-            if (fs.existsSync(fullPath)) {
-                fs.unlinkSync(fullPath);
+            if (publicId) {
+                await cloudinary.uploader.destroy(publicId);
+            } else if (imagePath && imagePath.startsWith("/uploads")) {
+                const fullPath = path.join(
+                    __dirname,
+                    imagePath.replace(/^\//, "")
+                );
+
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
             }
 
             res.json({
@@ -542,7 +541,7 @@ app.post("/api/forgot-password", async (req, res) => {
         saveUsers(users);
 
         const resetLink =
-            `http://localhost:3000/reset-password/${resetToken}`;
+            `${FRONTEND_URL}/reset-password/${resetToken}`;
 
         const transporter =
             await createTransporter();
@@ -580,6 +579,8 @@ app.post("/api/forgot-password", async (req, res) => {
                 nodemailer.getTestMessageUrl(info)
         });
     } catch (err) {
+        console.error(err);
+
         res.status(500).json({
             success: false,
             message: "Błąd resetowania hasła"
@@ -638,7 +639,7 @@ app.post("/api/reset-password", async (req, res) => {
     }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Serwer działa na porcie ${PORT}`);
