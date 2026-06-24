@@ -2,10 +2,12 @@
   {
     "id": 1,
     "username": "admin",
-    "password": "$2b$10$XlZutuqISay5jefGRFpbYuSOzjAX5FuDWAEySRZojsNE/e9MgdpVi",
+    "password": "$2b$10$AupJAcJueiEOZVdKu4ZV3O0.xv3ISO.F7NuVZodW27abc5Phu0E1W",
     "role": "admin",
     "failedLoginAttempts": 0,
-    "lockUntil": null
+    "lockUntil": null,
+    "resetToken": null,
+    "resetTokenExpires": null
   },
   {
     "id": 2,
@@ -13,6 +15,8 @@
     "password": "$2b$10$Zq3jQheR6DdZpN8i2axmqOkWAA/sVFvB61SqcQfouVm1EFmGg3jRe",
     "role": "artist",
     "failedLoginAttempts": 0,
-    "lockUntil": null
+    "lockUntil": null,
+    "resetToken": null,
+    "resetTokenExpires": null
   }
 ]

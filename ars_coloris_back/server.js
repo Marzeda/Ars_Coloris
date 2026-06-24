@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -455,6 +457,95 @@ app.post("/api/login", async(req, res) => {
     }
 });
 
+app.post("/api/forgot-password", (req, res) => {
+    const { username } = req.body;
+
+    try {
+        const users = readUsers();
+
+        const userIndex = users.findIndex(
+            (user) => user.username === username
+        );
+
+        if (userIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: "Nie znaleziono użytkownika"
+            });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const resetTokenExpires = Date.now() + 30 * 60 * 1000;
+
+        users[userIndex].resetToken = resetToken;
+        users[userIndex].resetTokenExpires = resetTokenExpires;
+
+        saveUsers(users);
+
+        res.json({
+            success: true,
+            message: "Token resetowania hasła został wygenerowany",
+            resetLink: `http://localhost:3000/reset-password/${resetToken}`
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Błąd resetowania hasła"
+        });
+    }
+});
+
+
+app.post("/api/reset-password", async (req, res) => {
+    const { token, password } = req.body;
+
+    try {
+        const users = readUsers();
+
+        const userIndex = users.findIndex(
+            (user) => user.resetToken === token
+        );
+
+        if (userIndex === -1) {
+            return res.status(400).json({
+                success: false,
+                message: "Nieprawidłowy token resetowania hasła"
+            });
+        }
+
+        const user = users[userIndex];
+
+        if (
+            !user.resetTokenExpires ||
+            Date.now() > user.resetTokenExpires
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Token resetowania hasła wygasł"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user.password = hashedPassword;
+        user.resetToken = null;
+        user.resetTokenExpires = null;
+        user.failedLoginAttempts = 0;
+        user.lockUntil = null;
+
+        saveUsers(users);
+
+        res.json({
+            success: true,
+            message: "Hasło zostało zmienione"
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Błąd zmiany hasła"
+        });
+    }
+});
 
 const PORT = 5000;
 

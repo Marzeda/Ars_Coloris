@@ -16,6 +16,8 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Artist from "./pages/Artist";
 
+import ResetPassword from "./pages/ResetPassword";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
@@ -53,6 +55,10 @@ function App() {
                             <Artist />
                         </ProtectedRoute>
                     }
+                />
+                <Route
+                    path="/reset-password/:token"
+                    element={<ResetPassword />}
                 />
 
             </Routes>
