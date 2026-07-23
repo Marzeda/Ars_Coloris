@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import ProductForm from "../components/ProductForm";
 import ConfirmModal from "../components/ConfirmModal";
 
-const API_URL = "http://localhost:5000";
+const API_URL =
+    process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function Admin() {
     const navigate = useNavigate();
@@ -17,11 +18,19 @@ function Admin() {
 
     useEffect(() => {
         fetch(`${API_URL}/api/products`)
-            .then((res) => res.json())
-            .then((data) => setProducts(data))
-            .catch((err) =>
-                console.error("Błąd pobierania produktów:", err)
-            );
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Nie udało się pobrać dzieł.");
+                }
+
+                return response.json();
+            })
+            .then((data) => {
+                setProducts(data);
+            })
+            .catch((error) => {
+                console.error("Błąd pobierania dzieł:", error);
+            });
     }, []);
 
     const getToken = () => {
@@ -43,12 +52,13 @@ function Admin() {
     const handleLogout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        navigate("/login");
+
+        navigate("/agnieszka");
     };
 
     const handleAddClick = () => {
         setProductToEdit(null);
-        setShowForm(!showForm);
+        setShowForm((currentValue) => !currentValue);
     };
 
     const handleEditClick = (product) => {
@@ -57,14 +67,18 @@ function Admin() {
     };
 
     const handleProductAdded = (newProduct) => {
-        setProducts([...products, newProduct]);
+        setProducts((currentProducts) => [
+            ...currentProducts,
+            newProduct
+        ]);
+
         setShowForm(false);
         setProductToEdit(null);
     };
 
     const handleProductUpdated = (updatedProduct) => {
-        setProducts(
-            products.map((product) =>
+        setProducts((currentProducts) =>
+            currentProducts.map((product) =>
                 product.id === updatedProduct.id
                     ? updatedProduct
                     : product
@@ -103,33 +117,41 @@ function Admin() {
 
             const data = await response.json();
 
-            if (response.ok) {
-                setProducts(
-                    products.filter(
-                        (product) => product.id !== productToDelete.id
-                    )
+            if (!response.ok) {
+                alert(
+                    data.message ||
+                    "Nie udało się usunąć dzieła."
                 );
 
-                closeDeleteModal();
-            } else {
-                alert(data.message);
+                return;
             }
-        } catch (err) {
-            console.error("Błąd usuwania:", err);
-            alert("Nie udało się usunąć produktu.");
+
+            setProducts((currentProducts) =>
+                currentProducts.filter(
+                    (product) =>
+                        product.id !== productToDelete.id
+                )
+            );
+
+            closeDeleteModal();
+        } catch (error) {
+            console.error("Błąd usuwania dzieła:", error);
+            alert("Nie udało się usunąć dzieła.");
         }
     };
 
     return (
         <div className="page">
-            <h1>Panel administratora</h1>
+            <h1>Panel Artysty</h1>
 
             <div className="admin-toolbar">
                 <button
                     className="add-product-button"
                     onClick={handleAddClick}
                 >
-                    {showForm ? "Ukryj formularz" : "+ Dodaj produkt"}
+                    {showForm
+                        ? "Ukryj formularz"
+                        : "+ Dodaj dzieło"}
                 </button>
 
                 <button
@@ -168,9 +190,12 @@ function Admin() {
                 {products.map((product) => (
                     <tr key={product.id}>
                         <td>
-                            {product.images && product.images.length > 0 ? (
+                            {product.images &&
+                            product.images.length > 0 ? (
                                 <img
-                                    src={getImageUrl(product.images[0])}
+                                    src={getImageUrl(
+                                        product.images[0]
+                                    )}
                                     alt={product.name}
                                     className="admin-product-thumbnail"
                                 />
@@ -185,10 +210,13 @@ function Admin() {
                         <td>{product.name}</td>
                         <td>{product.category}</td>
                         <td>{product.price} zł</td>
+
                         <td>
                             <button
                                 className="edit-button"
-                                onClick={() => handleEditClick(product)}
+                                onClick={() =>
+                                    handleEditClick(product)
+                                }
                             >
                                 Edytuj
                             </button>
@@ -197,7 +225,9 @@ function Admin() {
 
                             <button
                                 className="delete-button"
-                                onClick={() => openDeleteModal(product)}
+                                onClick={() =>
+                                    openDeleteModal(product)
+                                }
                             >
                                 Usuń
                             </button>
@@ -209,10 +239,10 @@ function Admin() {
 
             <ConfirmModal
                 isOpen={showDeleteModal}
-                title="Usuń produkt"
+                title="Usuń dzieło"
                 message={
                     productToDelete
-                        ? `Czy na pewno chcesz usunąć produkt „${productToDelete.name}”?`
+                        ? `Czy na pewno chcesz usunąć dzieło „${productToDelete.name}”?`
                         : ""
                 }
                 onConfirm={confirmDeleteProduct}

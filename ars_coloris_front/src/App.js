@@ -39,7 +39,8 @@ function App() {
                 <Route path="/cooperation" element={<Cooperation />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
-                <Route path="/login" element={<Login />} />
+
+                <Route path="/agnieszka" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
                 <Route
@@ -59,11 +60,11 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+
                 <Route
                     path="/reset-password/:token"
                     element={<ResetPassword />}
                 />
-
             </Routes>
 
             <Footer />

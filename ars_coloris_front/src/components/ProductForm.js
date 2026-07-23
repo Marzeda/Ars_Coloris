@@ -10,7 +10,7 @@ function ProductForm({
                      }) {
     const [formData, setFormData] = useState({
         name: "",
-        category: "Mozaiki ścienne",
+        category: "Dekoracje",
         price: "",
         availability: "Dostępny",
         deliveryTime: "3-5 dni roboczych",
@@ -27,7 +27,7 @@ function ProductForm({
         if (productToEdit) {
             setFormData({
                 name: productToEdit.name || "",
-                category: productToEdit.category || "Mozaiki ścienne",
+                category: productToEdit.category || "Dekoracje",
                 price: productToEdit.price || "",
                 availability: productToEdit.availability || "Dostępny",
                 deliveryTime:

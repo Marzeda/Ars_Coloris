@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const connectDB = require("./config/db");
+
 const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
@@ -18,7 +20,17 @@ const {
 
 const app = express();
 
-app.use(cors());
+
+app.use(
+    cors({
+        origin: [
+            "http://localhost:3000",
+            "https://ars-coloris.vercel.app"
+        ],
+        credentials: true
+    })
+);
+
 app.use(express.json());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -641,6 +653,12 @@ app.post("/api/reset-password", async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Serwer działa na porcie ${PORT}`);
-});
+const startServer = async () => {
+    await connectDB();
+
+    app.listen(PORT, () => {
+        console.log(`Serwer działa na porcie ${PORT}`);
+    });
+};
+
+startServer();

@@ -13,7 +13,7 @@ const products = [
     {
         id: 1,
         name: "Złota Harmonia",
-        category: "Mozaiki ścienne",
+        category: "Dekoracje",
         price: 350,
 		availability: "Na zamówienie",
 		deliveryTime: "3-15 dni roboczych",
@@ -24,7 +24,7 @@ const products = [
     {
         id: 2,
         name: "Ptaki wśród liści",
-        category: "Mozaiki ścienne",
+        category: "Dekoracje",
         price: 280,
 		availability: "Dostępny",
 		deliveryTime: "3-5 dni roboczych",
@@ -35,7 +35,7 @@ const products = [
     {
         id: 3,
         name: "Stolik Flora",
-        category: "Stoliki mozaikowe",
+        category: "Dekoracje",
         price: 950,
 		availability: "Dostępny",
 		deliveryTime: "3-5 dni roboczych",
@@ -46,7 +46,7 @@ const products = [
     {
         id: 4,
         name: "Stolik Szept Lata",
-        category: "Stoliki mozaikowe",
+        category: "Dekoracje",
         price: 890,
 		availability: "Dostępny",
 		deliveryTime: "3-5 dni roboczych",

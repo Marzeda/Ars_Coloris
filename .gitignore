@@ -3,11 +3,18 @@ node_modules/
 ars_coloris_front/node_modules/
 ars_coloris_back/node_modules/
 
-#temp
+# Temporary files
 temp/
 
 # Environment
 .env
+.env.*
+
+# Local credentials
+atlas-credentials.env
+
+# IDE
+.idea/
 
 # Build
 build/
@@ -23,6 +30,7 @@ coverage/
 
 # System
 .DS_Store
+Thumbs.db
 
-# Notatki
+# Notes
 notatki.txt

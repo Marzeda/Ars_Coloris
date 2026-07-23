@@ -16,11 +16,16 @@ function Gallery() {
             .catch((err) => console.error("Błąd pobierania produktów:", err));
     }, []);
 
+
     const categories = [
         "Wszystkie",
-        "Mozaiki ścienne",
-        "Stoliki mozaikowe",
-        "Mozaiki ogrodowe",
+        "Stoliki",
+        "Świeczniki",
+        "Pudełka",
+        "Koszyki",
+        "Patery",
+        "Dekoracje",
+        "Pozostałe prace",
     ];
 
     const getImageUrl = (imagePath) => {

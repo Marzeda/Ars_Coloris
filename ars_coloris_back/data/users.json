@@ -13,8 +13,8 @@
   {
     "id": 2,
     "username": "agnieszka",
-    "email": "marzedat@gmail.com",
-    "password": "$2b$10$Zq3jQheR6DdZpN8i2axmqOkWAA/sVFvB61SqcQfouVm1EFmGg3jRe",
+    "email": "agaarscoloris@gmai.com",
+    "password": "$2b$10$.HpL8NNlcVD6/ZZ5i.YY7ejAp1Uw4Hd6pyaiduSCJioaL/K2KOMjW",
     "role": "artist",
     "failedLoginAttempts": 0,
     "lockUntil": null,
