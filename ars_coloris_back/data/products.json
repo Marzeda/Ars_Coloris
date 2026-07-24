@@ -49,16 +49,17 @@
     "description": "Stolik mozaikowy z kwiatowym motywem inspirowanym letnim ogrodem."
   },
   {
-    "id": 7,
-    "name": "nowy produkt testowy nr 3",
-    "category": "Mozaiki ścienne",
-    "price": 21312,
+    "id": 5,
+    "name": "nowa bardzo ładna mozaika",
+    "category": "Dekoracje",
+    "price": 12987,
     "availability": "Dostępny",
     "deliveryTime": "3-5 dni roboczych",
     "images": [
-      "/uploads/products/nowy-produkt-testowy-nr-3/1782317346676-zrzut-ekranu-(1).png",
-      "/uploads/products/nowy-produkt-testowy-nr-3/1782317346682-zrzut-ekranu-(2).png"
+      "https://res.cloudinary.com/qjno0gmb/image/upload/v1784891381/ars-coloris/products/pxdv9kpqevytaemhwg6m.png",
+      "https://res.cloudinary.com/qjno0gmb/image/upload/v1784891382/ars-coloris/products/gqhkhbxwvvvxxrpjq3xw.png",
+      "https://res.cloudinary.com/qjno0gmb/image/upload/v1784891381/ars-coloris/products/mdu80xve2lfzxxbjpkyg.png"
     ],
-    "description": "asdf"
+    "description": "asdlkfja bardzo ładna mozaika agnieszki"
   }
 ]
