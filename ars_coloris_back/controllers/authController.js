@@ -1,18 +1,10 @@
 const crypto = require("crypto");
-const fs = require("fs");
-const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
+const User = require("../models/User");
 const { createTransporter } = require("../mail");
-
-const usersPath = path.join(
-    __dirname,
-    "..",
-    "data",
-    "users.json"
-);
 
 const JWT_SECRET =
     process.env.JWT_SECRET || "ars_coloris_secret_key";
@@ -20,21 +12,12 @@ const JWT_SECRET =
 const FRONTEND_URL =
     process.env.FRONTEND_URL || "http://localhost:3000";
 
-const readUsers = () => {
-    const data = fs.readFileSync(
-        usersPath,
-        "utf8"
-    );
+const MAX_LOGIN_ATTEMPTS = 3;
+const ACCOUNT_LOCK_TIME_MS = 2 * 60 * 60 * 1000;
+const RESET_TOKEN_TIME_MS = 30 * 60 * 1000;
 
-    return JSON.parse(data);
-};
-
-const saveUsers = (users) => {
-    fs.writeFileSync(
-        usersPath,
-        JSON.stringify(users, null, 2),
-        "utf8"
-    );
+const normalizeUsername = (username) => {
+    return username.trim().toLowerCase();
 };
 
 const loginUser = async (req, res) => {
@@ -48,33 +31,32 @@ const loginUser = async (req, res) => {
     }
 
     try {
-        const users = readUsers();
-
         const normalizedUsername =
-            username.trim().toLowerCase();
+            normalizeUsername(username);
 
-        const userIndex = users.findIndex(
-            (user) =>
-                user.username.toLowerCase() ===
-                normalizedUsername
-        );
+        const user = await User.findOne({
+            username: normalizedUsername,
+            isActive: true
+        });
 
-        if (userIndex === -1) {
+        if (!user) {
             return res.status(401).json({
                 success: false,
                 message: "Nieprawidłowy login lub hasło"
             });
         }
 
-        const user = users[userIndex];
-        const now = Date.now();
+        const now = new Date();
 
         if (
             user.lockUntil &&
-            now < user.lockUntil
+            user.lockUntil.getTime() > now.getTime()
         ) {
             const remainingMinutes = Math.ceil(
-                (user.lockUntil - now) / 60000
+                (
+                    user.lockUntil.getTime() -
+                    now.getTime()
+                ) / 60000
             );
 
             return res.status(403).json({
@@ -91,17 +73,21 @@ const loginUser = async (req, res) => {
             );
 
         if (!passwordMatches) {
-            user.failedLoginAttempts =
-                (user.failedLoginAttempts || 0) + 1;
+            user.failedLoginAttempts += 1;
 
-            if (user.failedLoginAttempts >= 3) {
-                user.lockUntil =
-                    now + 2 * 60 * 60 * 1000;
+            if (
+                user.failedLoginAttempts >=
+                MAX_LOGIN_ATTEMPTS
+            ) {
+                user.lockUntil = new Date(
+                    Date.now() +
+                    ACCOUNT_LOCK_TIME_MS
+                );
 
                 user.failedLoginAttempts = 0;
             }
 
-            saveUsers(users);
+            await user.save();
 
             return res.status(401).json({
                 success: false,
@@ -112,11 +98,14 @@ const loginUser = async (req, res) => {
         user.failedLoginAttempts = 0;
         user.lockUntil = null;
 
-        saveUsers(users);
+        await user.save();
 
         const token = jwt.sign(
             {
-                id: user.id,
+                id:
+                    user.legacyId ||
+                    user._id.toString(),
+
                 username: user.username,
                 role: user.role
             },
@@ -130,7 +119,10 @@ const loginUser = async (req, res) => {
             success: true,
             token,
             user: {
-                id: user.id,
+                id:
+                    user.legacyId ||
+                    user._id.toString(),
+
                 username: user.username,
                 role: user.role
             }
@@ -156,18 +148,15 @@ const forgotPassword = async (req, res) => {
     }
 
     try {
-        const users = readUsers();
-
         const normalizedUsername =
-            username.trim().toLowerCase();
+            normalizeUsername(username);
 
-        const userIndex = users.findIndex(
-            (user) =>
-                user.username.toLowerCase() ===
-                normalizedUsername
-        );
+        const user = await User.findOne({
+            username: normalizedUsername,
+            isActive: true
+        });
 
-        if (userIndex === -1) {
+        if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "Nie znaleziono użytkownika"
@@ -177,16 +166,16 @@ const forgotPassword = async (req, res) => {
         const resetToken =
             crypto.randomBytes(32).toString("hex");
 
-        const resetTokenExpires =
-            Date.now() + 30 * 60 * 1000;
+        const resetTokenExpires = new Date(
+            Date.now() +
+            RESET_TOKEN_TIME_MS
+        );
 
-        users[userIndex].resetToken =
-            resetToken;
-
-        users[userIndex].resetTokenExpires =
+        user.resetToken = resetToken;
+        user.resetTokenExpires =
             resetTokenExpires;
 
-        saveUsers(users);
+        await user.save();
 
         const resetLink =
             `${FRONTEND_URL}/reset-password/${resetToken}`;
@@ -198,9 +187,7 @@ const forgotPassword = async (req, res) => {
             from:
                 '"Ars Coloris" <noreply@arscoloris.pl>',
 
-            to:
-                users[userIndex].email ||
-                "admin@example.com",
+            to: user.email,
 
             subject:
                 "Reset hasła Ars Coloris",
@@ -258,37 +245,19 @@ const resetPassword = async (req, res) => {
     }
 
     try {
-        const users = readUsers();
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpires: {
+                $gt: new Date()
+            },
+            isActive: true
+        });
 
-        const userIndex = users.findIndex(
-            (user) =>
-                user.resetToken === token
-        );
-
-        if (userIndex === -1) {
+        if (!user) {
             return res.status(400).json({
                 success: false,
                 message:
-                    "Nieprawidłowy token resetowania hasła"
-            });
-        }
-
-        const user = users[userIndex];
-
-        if (
-            !user.resetTokenExpires ||
-            Date.now() >
-            user.resetTokenExpires
-        ) {
-            user.resetToken = null;
-            user.resetTokenExpires = null;
-
-            saveUsers(users);
-
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Token resetowania hasła wygasł"
+                    "Token resetowania hasła jest nieprawidłowy lub wygasł"
             });
         }
 
@@ -301,7 +270,7 @@ const resetPassword = async (req, res) => {
         user.failedLoginAttempts = 0;
         user.lockUntil = null;
 
-        saveUsers(users);
+        await user.save();
 
         return res.json({
             success: true,
