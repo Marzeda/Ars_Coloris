@@ -14,7 +14,7 @@
     "id": 2,
     "username": "agnieszka",
     "email": "agaarscoloris@gmail.com",
-    "password": "$2b$10$ygvRWiAzq1q3NXzSqShZ4.NMJXSY/TfAiyCEd..fQgcVZFA5M4jEm",
+    "password": "$2b$10$/NWtPHP9gDjEGIdntB5HpuZwvCuii0Ns84BLPR9FUo2nLTmdSdcg6",
     "role": "artist",
     "failedLoginAttempts": 0,
     "lockUntil": null,
