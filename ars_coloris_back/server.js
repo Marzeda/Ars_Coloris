@@ -3,6 +3,8 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 
+const productRoutes = require("./routes/productRoutes");
+
 const {
     verifyToken,
     verifyPanelUser,
@@ -39,6 +41,8 @@ app.use(
 app.use(express.json());
 
 app.use("/api", authRoutes);
+
+app.use("/api/products", productRoutes);
 
 app.use(
     "/uploads",
@@ -95,54 +99,6 @@ app.get("/", (req, res) => {
         "Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech"
     );
 });
-
-app.get("/api/products", (req, res) => {
-    try {
-        const products = readProducts();
-
-        return res.json(products);
-    } catch (error) {
-        console.error(
-            "Błąd odczytu produktów:",
-            error
-        );
-
-        return res.status(500).json({
-            message: "Błąd odczytu produktów"
-        });
-    }
-});
-
-app.get("/api/products/:id", (req, res) => {
-    try {
-        const productId =
-            Number(req.params.id);
-
-        const products = readProducts();
-
-        const product = products.find(
-            (item) => item.id === productId
-        );
-
-        if (!product) {
-            return res.status(404).json({
-                message: "Nie znaleziono produktu"
-            });
-        }
-
-        return res.json(product);
-    } catch (error) {
-        console.error(
-            "Błąd odczytu produktu:",
-            error
-        );
-
-        return res.status(500).json({
-            message: "Błąd odczytu produktu"
-        });
-    }
-});
-
 app.post(
     "/api/products",
     verifyToken,
