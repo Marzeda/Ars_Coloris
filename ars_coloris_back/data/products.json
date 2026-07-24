@@ -61,5 +61,15 @@
       "https://res.cloudinary.com/qjno0gmb/image/upload/v1784891381/ars-coloris/products/mdu80xve2lfzxxbjpkyg.png"
     ],
     "description": "asdlkfja bardzo ładna mozaika agnieszki"
+  },
+  {
+    "id": 6,
+    "name": "nowy ładny produkt",
+    "category": "Dekoracje",
+    "price": 12000,
+    "availability": "Dostępny",
+    "deliveryTime": "3-5 dni roboczych",
+    "images": [],
+    "description": "opis bardzo ładnego nowego produktu"
   }
 ]

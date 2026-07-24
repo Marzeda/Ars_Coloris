@@ -69,6 +69,17 @@ const productSchema = new mongoose.Schema(
         collection: "products"
     }
 );
+productSchema.virtual("id").get(function () {
+    return this.legacyId;
+});
+
+productSchema.set("toJSON", {
+    virtuals: true,
+    versionKey: false,
+    transform: (_, ret) => {
+        delete ret._id;
+    }
+});
 
 const Product = mongoose.model("Product", productSchema);
 

@@ -99,59 +99,6 @@ app.get("/", (req, res) => {
         "Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech"
     );
 });
-app.post(
-    "/api/products",
-    verifyToken,
-    verifyPanelUser,
-    (req, res) => {
-        try {
-            const products = readProducts();
-
-            const newId =
-                products.length > 0
-                    ? Math.max(
-                    ...products.map(
-                        (product) => product.id
-                    )
-                ) + 1
-                    : 1;
-
-            const newProduct = {
-                id: newId,
-                name: req.body.name,
-                category: req.body.category,
-                price: Number(req.body.price),
-                availability:
-                req.body.availability,
-                deliveryTime:
-                req.body.deliveryTime,
-                images: req.body.images || [],
-                description:
-                req.body.description
-            };
-
-            products.push(newProduct);
-
-            saveProducts(products);
-
-            return res.status(201).json({
-                message:
-                    "Produkt został dodany",
-                product: newProduct
-            });
-        } catch (error) {
-            console.error(
-                "Błąd dodawania produktu:",
-                error
-            );
-
-            return res.status(500).json({
-                message:
-                    "Błąd dodawania produktu"
-            });
-        }
-    }
-);
 
 app.put(
     "/api/products/:id",
