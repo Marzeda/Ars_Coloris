@@ -3,7 +3,9 @@ const express = require("express");
 const {
     getProducts,
     getProductById,
-    createProduct
+    createProduct,
+    updateProduct,
+    deleteProduct
 } = require("../controllers/productController");
 
 const {
@@ -28,6 +30,20 @@ router.post(
     verifyToken,
     verifyPanelUser,
     createProduct
+);
+
+router.put(
+    "/:id",
+    verifyToken,
+    verifyPanelUser,
+    updateProduct
+);
+
+router.delete(
+    "/:id",
+    verifyToken,
+    verifyPanelUser,
+    deleteProduct
 );
 
 module.exports = router;
