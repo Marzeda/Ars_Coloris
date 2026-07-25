@@ -1,59 +1,23 @@
 require("dotenv").config();
 
-const connectDB = require("./config/db");
-const authRoutes = require("./routes/authRoutes");
-
-const productRoutes = require("./routes/productRoutes");
-
-const {
-    verifyToken,
-    verifyPanelUser,
-    verifyAdmin
-} = require("./middleware/authMiddleware");
-
-const {
-    getCloudinaryPublicId
-} = require("./utils/cloudinaryUtils");
-
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-const multer = require("multer");
+
+const connectDB = require("./config/db");
+
+const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 const {
-    cloudinary,
-    storage: cloudinaryStorage
-} = require("./cloudinaryConfig");
+    verifyToken,
+    verifyAdmin
+} = require("./middleware/authMiddleware");
 
 const app = express();
 
-app.use(
-    cors({
-        origin: [
-            "http://localhost:3000",
-            "https://ars-coloris.vercel.app"
-        ],
-        credentials: true
-    })
-);
-
-app.use(express.json());
-
-app.use("/api", authRoutes);
-
-app.use("/api/products", productRoutes);
-
-app.use(
-    "/uploads",
-    express.static(path.join(__dirname, "uploads"))
-);
-
-const productsPath = path.join(
-    __dirname,
-    "data",
-    "products.json"
-);
+const PORT = process.env.PORT || 5000;
 
 const usersPath = path.join(
     __dirname,
@@ -61,29 +25,29 @@ const usersPath = path.join(
     "users.json"
 );
 
-const JWT_SECRET =
-    process.env.JWT_SECRET || "ars_coloris_secret_key";
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://ars-coloris.vercel.app"
+];
 
-const upload = multer({
-    storage: cloudinaryStorage
-});
+app.use(
+    cors({
+        origin: allowedOrigins,
+        credentials: true
+    })
+);
 
-const readProducts = () => {
-    const data = fs.readFileSync(
-        productsPath,
-        "utf8"
-    );
+app.use(express.json());
 
-    return JSON.parse(data);
-};
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
 
-const saveProducts = (products) => {
-    fs.writeFileSync(
-        productsPath,
-        JSON.stringify(products, null, 2),
-        "utf8"
-    );
-};
+app.use("/api", authRoutes);
+app.use("/api/products", productRoutes);
 
 const readUsers = () => {
     const data = fs.readFileSync(
@@ -95,330 +59,10 @@ const readUsers = () => {
 };
 
 app.get("/", (req, res) => {
-    res.send(
+    return res.send(
         "Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech"
     );
 });
-
-app.put(
-    "/api/products/:id",
-    verifyToken,
-    verifyPanelUser,
-    (req, res) => {
-        try {
-            const productId =
-                Number(req.params.id);
-
-            const products = readProducts();
-
-            const productIndex =
-                products.findIndex(
-                    (product) =>
-                        product.id === productId
-                );
-
-            if (productIndex === -1) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono produktu"
-                });
-            }
-
-            products[productIndex] = {
-                ...products[productIndex],
-                ...req.body,
-                id: productId,
-                price: Number(req.body.price)
-            };
-
-            saveProducts(products);
-
-            return res.json(
-                products[productIndex]
-            );
-        } catch (error) {
-            console.error(
-                "Błąd zapisu produktu:",
-                error
-            );
-
-            return res.status(500).json({
-                message:
-                    "Błąd zapisu produktu"
-            });
-        }
-    }
-);
-
-app.put(
-    "/api/products/:id/main-image",
-    verifyToken,
-    verifyPanelUser,
-    (req, res) => {
-        try {
-            const productId =
-                Number(req.params.id);
-
-            const { imagePath } = req.body;
-
-            const products = readProducts();
-
-            const productIndex =
-                products.findIndex(
-                    (product) =>
-                        product.id === productId
-                );
-
-            if (productIndex === -1) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono produktu"
-                });
-            }
-
-            const product =
-                products[productIndex];
-
-            if (
-                !product.images ||
-                !product.images.includes(imagePath)
-            ) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono zdjęcia"
-                });
-            }
-
-            product.images = [
-                imagePath,
-                ...product.images.filter(
-                    (image) =>
-                        image !== imagePath
-                )
-            ];
-
-            saveProducts(products);
-
-            return res.json({
-                success: true,
-                message:
-                    "Zdjęcie główne zostało ustawione",
-                images: product.images,
-                product
-            });
-        } catch (error) {
-            console.error(
-                "Błąd ustawiania zdjęcia głównego:",
-                error
-            );
-
-            return res.status(500).json({
-                success: false,
-                message:
-                    "Błąd ustawiania zdjęcia głównego"
-            });
-        }
-    }
-);
-
-app.delete(
-    "/api/products/:id",
-    verifyToken,
-    verifyPanelUser,
-    (req, res) => {
-        try {
-            const productId =
-                Number(req.params.id);
-
-            const products = readProducts();
-
-            const productExists =
-                products.find(
-                    (product) =>
-                        product.id === productId
-                );
-
-            if (!productExists) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono produktu"
-                });
-            }
-
-            const updatedProducts =
-                products.filter(
-                    (product) =>
-                        product.id !== productId
-                );
-
-            saveProducts(updatedProducts);
-
-            return res.json({
-                success: true,
-                message:
-                    "Produkt został usunięty"
-            });
-        } catch (error) {
-            console.error(
-                "Błąd usuwania produktu:",
-                error
-            );
-
-            return res.status(500).json({
-                success: false,
-                message:
-                    "Błąd usuwania produktu"
-            });
-        }
-    }
-);
-
-app.post(
-    "/api/products/:id/images",
-    verifyToken,
-    verifyPanelUser,
-    upload.array("images", 10),
-    (req, res) => {
-        try {
-            const productId =
-                Number(req.params.id);
-
-            const products = readProducts();
-
-            const productIndex =
-                products.findIndex(
-                    (product) =>
-                        product.id === productId
-                );
-
-            if (productIndex === -1) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono produktu"
-                });
-            }
-
-            const uploadedImages =
-                req.files.map(
-                    (file) => file.path
-                );
-
-            products[productIndex].images = [
-                ...(
-                    products[productIndex]
-                        .images || []
-                ),
-                ...uploadedImages
-            ];
-
-            saveProducts(products);
-
-            return res.json({
-                message:
-                    "Zdjęcia zostały dodane",
-                images:
-                products[productIndex]
-                    .images,
-                product:
-                    products[productIndex]
-            });
-        } catch (error) {
-            console.error(
-                "Błąd uploadu zdjęć:",
-                error
-            );
-
-            return res.status(500).json({
-                message:
-                    "Błąd uploadu zdjęć"
-            });
-        }
-    }
-);
-
-app.delete(
-    "/api/products/:id/images",
-    verifyToken,
-    verifyPanelUser,
-    async (req, res) => {
-        try {
-            const productId =
-                Number(req.params.id);
-
-            const { imagePath } = req.body;
-
-            const products = readProducts();
-
-            const productIndex =
-                products.findIndex(
-                    (product) =>
-                        product.id === productId
-                );
-
-            if (productIndex === -1) {
-                return res.status(404).json({
-                    message:
-                        "Nie znaleziono produktu"
-                });
-            }
-
-            const product =
-                products[productIndex];
-
-            product.images =
-                product.images.filter(
-                    (image) =>
-                        image !== imagePath
-                );
-
-            saveProducts(products);
-
-            const publicId =
-                getCloudinaryPublicId(
-                    imagePath
-                );
-
-            if (publicId) {
-                await cloudinary.uploader.destroy(
-                    publicId
-                );
-            } else if (
-                imagePath &&
-                imagePath.startsWith("/uploads")
-            ) {
-                const fullPath = path.join(
-                    __dirname,
-                    imagePath.replace(
-                        /^\//,
-                        ""
-                    )
-                );
-
-                if (fs.existsSync(fullPath)) {
-                    fs.unlinkSync(fullPath);
-                }
-            }
-
-            return res.json({
-                success: true,
-                message:
-                    "Zdjęcie zostało usunięte",
-                images: product.images
-            });
-        } catch (error) {
-            console.error(
-                "Błąd usuwania zdjęcia:",
-                error
-            );
-
-            return res.status(500).json({
-                success: false,
-                message:
-                    "Błąd usuwania zdjęcia"
-            });
-        }
-    }
-);
 
 app.get(
     "/api/users",
@@ -436,6 +80,7 @@ app.get(
             );
 
             return res.status(500).json({
+                success: false,
                 message:
                     "Błąd odczytu użytkowników"
             });
@@ -443,17 +88,23 @@ app.get(
     }
 );
 
-const PORT =
-    process.env.PORT || 5000;
-
 const startServer = async () => {
-    await connectDB();
+    try {
+        await connectDB();
 
-    app.listen(PORT, () => {
-        console.log(
-            `Serwer działa na porcie ${PORT}`
+        app.listen(PORT, () => {
+            console.log(
+                `Serwer działa na porcie ${PORT}`
+            );
+        });
+    } catch (error) {
+        console.error(
+            "Nie udało się uruchomić serwera:",
+            error
         );
-    });
+
+        process.exit(1);
+    }
 };
 
 startServer();
