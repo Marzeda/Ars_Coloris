@@ -1,23 +1,17 @@
 const Product = require("../models/Product");
 const getNextSequence = require("../utils/getNextSequence");
+const mapProductForFrontend = require(
+    "../utils/mapProductForFrontend"
+);
 
-const mapProductForFrontend = (product) => {
-    return {
-        id: product.legacyId,
-        name: product.name,
-        category: product.category,
-        price: product.price,
-        availability: product.availability,
-        deliveryTime: product.deliveryTime,
-        images: product.images,
-        description: product.description,
-        isFeatured: product.isFeatured,
-        isPublished: product.isPublished,
-        displayOrder: product.displayOrder,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt
-    };
-};
+const {
+    cloudinary
+} = require("../cloudinaryConfig");
+
+const {
+    getCloudinaryPublicId
+} = require("../utils/cloudinaryUtils");
+
 
 const getProducts = async (req, res) => {
     try {
@@ -28,11 +22,9 @@ const getProducts = async (req, res) => {
             createdAt: 1
         });
 
-        const mappedProducts = products.map(
-            mapProductForFrontend
+        return res.json(
+            products.map(mapProductForFrontend)
         );
-
-        return res.json(mappedProducts);
     } catch (error) {
         console.error(
             "Błąd pobierania produktów z MongoDB:",
@@ -118,7 +110,8 @@ const createProduct = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Cena produktu jest nieprawidłowa."
+                message:
+                    "Cena produktu jest nieprawidłowa."
             });
         }
 
@@ -128,21 +121,26 @@ const createProduct = async (req, res) => {
 
         const product = new Product({
             legacyId,
-            name: name.trim(),
-            category: category.trim(),
+            name: String(name).trim(),
+            category: String(category).trim(),
             price: parsedPrice,
+
             availability:
                 typeof availability === "string"
                     ? availability.trim()
                     : "Dostępny",
+
             deliveryTime:
                 typeof deliveryTime === "string"
                     ? deliveryTime.trim()
                     : "",
-            description: description.trim(),
+
+            description: String(description).trim(),
+
             images: Array.isArray(images)
                 ? images
                 : [],
+
             isFeatured: false,
             isPublished: true,
             displayOrder: 0
@@ -220,7 +218,8 @@ const updateProduct = async (req, res) => {
         } = req.body;
 
         if (name !== undefined) {
-            const trimmedName = String(name).trim();
+            const trimmedName =
+                String(name).trim();
 
             if (!trimmedName) {
                 return res.status(400).json({
@@ -335,14 +334,7 @@ const updateProduct = async (req, res) => {
 
         await product.save();
 
-        /*
-         * Frontend w trybie edycji wykonuje:
-         *
-         * onProductUpdated(data)
-         *
-         * dlatego zwracamy bezpośrednio produkt,
-         * a nie { success: true, product: ... }.
-         */
+        // Frontend oczekuje bezpośrednio obiektu produktu.
         return res.json(
             mapProductForFrontend(product)
         );
@@ -368,7 +360,10 @@ const updateProduct = async (req, res) => {
     }
 };
 
+
+
 const deleteProduct = async (req, res) => {
+
     try {
         const productId = Number(req.params.id);
 
@@ -390,15 +385,59 @@ const deleteProduct = async (req, res) => {
             });
         }
 
-        await Product.deleteOne({
-            legacyId: productId
-        });
+        const images = Array.isArray(product.images)
+            ? product.images
+            : [];
+
+        for (const imagePath of images) {
+            const publicId =
+                getCloudinaryPublicId(imagePath);
+
+            if (!publicId) {
+                console.warn(
+                    "Nie rozpoznano public_id:",
+                    imagePath
+                );
+
+                continue;
+            }
+
+            console.log(
+                "Usuwanie z Cloudinary:",
+                publicId
+            );
+
+            const result =
+                await cloudinary.uploader.destroy(
+                    publicId,
+                    {
+                        invalidate: true,
+                        resource_type: "image"
+                    }
+                );
+
+            console.log(
+                "Wynik Cloudinary:",
+                result
+            );
+
+            if (result.result !== "ok") {
+                return res.status(502).json({
+                    success: false,
+                    message:
+                        `Cloudinary nie usunęło zdjęcia: ${publicId}`,
+                    cloudinaryResult: result.result
+                });
+            }
+        }
+
+        await product.deleteOne();
 
         return res.json({
             success: true,
-            message: "Produkt został usunięty."
+            message:
+                "Produkt i jego zdjęcia zostały usunięte."
         });
-
     } catch (error) {
         console.error(
             "Błąd usuwania produktu:",
@@ -407,42 +446,17 @@ const deleteProduct = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: "Nie udało się usunąć produktu."
+            message:
+                "Nie udało się usunąć produktu."
         });
     }
 };
 
-const uploadImages = async (req, res) => {
-    return res.status(501).json({
-        success: false,
-        message:
-            "Funkcja uploadImages nie została jeszcze zaimplementowana"
-    });
-};
-
-const deleteImage = async (req, res) => {
-    return res.status(501).json({
-        success: false,
-        message:
-            "Funkcja deleteImage nie została jeszcze zaimplementowana"
-    });
-};
-
-const setMainImage = async (req, res) => {
-    return res.status(501).json({
-        success: false,
-        message:
-            "Funkcja setMainImage nie została jeszcze zaimplementowana"
-    });
-};
 
 module.exports = {
     getProducts,
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct,
-    uploadImages,
-    deleteImage,
-    setMainImage
+    deleteProduct
 };
