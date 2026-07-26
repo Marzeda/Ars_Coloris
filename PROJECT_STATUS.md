@@ -2,17 +2,21 @@
 
 # Ars Coloris
 
-Aplikacja internetowa prezentująca i zarządzająca autorskimi mozaikami artystycznymi Agnieszki Szelech.
+Internetowa aplikacja prezentująca oraz umożliwiająca zarządzanie autorskimi mozaikami artystycznymi Agnieszki Szelech.
 
 ---
 
-# Aktualny status projektu
+# Status projektu
 
-## Stan projektu
+## Aktualny stan
 
-✅ Frontend działa lokalnie
+✅ Frontend działa poprawnie
 
-✅ Backend działa lokalnie
+✅ Backend działa poprawnie
+
+✅ MongoDB Atlas działa
+
+✅ Cloudinary działa
 
 ✅ Logowanie działa
 
@@ -22,15 +26,15 @@ Aplikacja internetowa prezentująca i zarządzająca autorskimi mozaikami artyst
 
 ✅ Reset hasła działa
 
-✅ Cloudinary skonfigurowane
+✅ CRUD produktów działa
 
-✅ Zarządzanie produktami działa
+✅ Zarządzanie zdjęciami działa
 
-✅ Upload zdjęć działa
+✅ Panel Administratora działa
 
-✅ Panel administratora działa
+✅ Panel Artysty działa
 
-✅ Panel artysty działa
+Projekt jest stabilny i gotowy do wdrożenia środowiska produkcyjnego.
 
 ---
 
@@ -38,70 +42,130 @@ Aplikacja internetowa prezentująca i zarządzająca autorskimi mozaikami artyst
 
 ## Frontend
 
-* React
-* React Router
-* CSS
-* Vercel (wdrożenie planowane/częściowo gotowe)
+- React
+- React Router
+- CSS
+- Axios
+
+Planowane wdrożenie:
+
+- Vercel
+
+---
 
 ## Backend
 
-* Node.js
-* Express
-* JWT
-* bcryptjs
-* Nodemailer
-* Multer
-* Cloudinary
+- Node.js
+- Express
+- MongoDB Atlas
+- Mongoose
+- JWT
+- bcryptjs
+- Nodemailer
+- Multer
+- Cloudinary
 
-## Przechowywanie danych
+Planowane wdrożenie:
 
-Obecnie:
+- Render
 
-* data/products.json
-* data/users.json
+---
 
-Docelowo:
+# Baza danych
 
-* MongoDB Atlas
+## MongoDB Atlas
+
+Produkty są przechowywane w MongoDB.
+
+Model Product obejmuje między innymi:
+
+- legacyId
+- name
+- category
+- price
+- availability
+- deliveryTime
+- description
+- images
+- isFeatured
+- isPublished
+- displayOrder
+- createdAt
+- updatedAt
+
+Do zachowania numeracji produktów wykorzystywany jest model Counter.
+
+---
+
+# Cloudinary
+
+Zdjęcia produktów są przechowywane w Cloudinary.
+
+Obsługiwane funkcje:
+
+- upload zdjęć
+- usuwanie pojedynczego zdjęcia
+- ustawianie zdjęcia głównego
+- automatyczne usuwanie zdjęć podczas usuwania produktu
+
+---
+
+# Autoryzacja
+
+## JWT
+
+Token zawiera:
+
+- id
+- username
+- role
+
+Czas ważności:
+
+2 godziny
+
+Chronione endpointy:
+
+- POST /api/products
+- PUT /api/products/:id
+- DELETE /api/products/:id
+- POST /api/products/:id/images
+- DELETE /api/products/:id/images
+- PUT /api/products/:id/main-image
+- GET /api/users
 
 ---
 
 # Role użytkowników
 
-## Admin
-
-Login:
-
-admin
+## Administrator
 
 Uprawnienia:
 
-* logowanie
-* reset hasła
-* dodawanie produktów
-* edycja produktów
-* usuwanie produktów
-* zarządzanie zdjęciami
-* przegląd użytkowników
+- logowanie
+- reset hasła
+- dodawanie produktów
+- edycja produktów
+- usuwanie produktów
+- zarządzanie zdjęciami
+- przegląd użytkowników
+
+---
 
 ## Artist
 
-Login:
-
-agnieszka
-
 Uprawnienia:
 
-* logowanie
-* reset hasła
-* dodawanie produktów
-* edycja produktów
-* usuwanie produktów
-* zarządzanie zdjęciami
+- logowanie
+- reset hasła
+- dodawanie produktów
+- edycja produktów
+- usuwanie produktów
+- zarządzanie zdjęciami
 
 Brak dostępu do:
 
-* listy użytkowników
+- listy użytkowników
 
 ---
 
@@ -109,161 +173,210 @@ Brak dostępu do:
 
 ## Logowanie
 
-* hasła szyfrowane bcrypt
-* JWT po zalogowaniu
-* token przechowywany w localStorage
-
-## Ochrona kont
-
-* blokada po 3 błędnych próbach logowania
-* blokada na 2 godziny
-* zerowanie licznika po poprawnym logowaniu
+- hasła szyfrowane bcrypt
+- JWT
+- middleware autoryzacji
+- middleware ról użytkowników
 
 ## Reset hasła
 
-* jednorazowy token resetu
-* ważność 30 minut
-* token usuwany po użyciu
+- jednorazowy token resetu
+- ważność 30 minut
+- automatyczne usunięcie tokenu po wykorzystaniu
 
 ---
 
-# Cloudinary
+# Struktura backendu
 
-Konto skonfigurowane.
-
-Zmienne środowiskowe:
-
-CLOUDINARY_CLOUD_NAME
-
-CLOUDINARY_API_KEY
-
-CLOUDINARY_API_SECRET
-
-Nowe zdjęcia produktów są przechowywane w Cloudinary.
-
----
-
-# JWT
-
-Token zawiera:
-
-* id
-* username
-* role
-
-Ważność:
-
-2 godziny
-
-Endpointy chronione:
-
-POST /api/products
-
-PUT /api/products/:id
-
-DELETE /api/products/:id
-
-POST /api/products/:id/images
-
-DELETE /api/products/:id/images
-
-PUT /api/products/:id/main-image
-
-GET /api/users
-
----
-
-# Struktura projektu
-
-## Frontend
-
-pages/
-
-* Home
-* Gallery
-* ProductDetails
-* About
-* Cooperation
-* Contact
-* Login
-* Admin
-* Artist
-* ForgotPassword
-* ResetPassword
-
-components/
-
-* Navbar
-* Footer
-* ProductForm
-* ConfirmModal
-* ProtectedRoute
-* ScrollToTop
-* ScrollToTopButton
-* ImageModal
-
----
-
-## Backend
+```
+config/
+controllers/
+middleware/
+models/
+routes/
+scripts/
+utils/
 
 server.js
-
-mail.js
-
 cloudinaryConfig.js
+mail.js
+```
 
-middleware JWT
+Kontrolery:
 
-data/
+- authController
+- productController
+- productImageController
 
-* products.json
-* users.json
+Modele:
+
+- Product
+- Counter
 
 ---
 
-# Następne kroki
+# Struktura frontendu
 
-## Priorytet 1
+```
+components/
+pages/
+hooks/
+utils/
+services/
+```
 
-Wdrożenie backendu na Render
+Najważniejsze komponenty:
 
-* utworzenie konta Render
-* deployment backendu
-* konfiguracja zmiennych środowiskowych
+- Navbar
+- Footer
+- ProductForm
+- ImageModal
+- ConfirmModal
+- ProtectedRoute
+- ScrollToTop
 
-## Priorytet 2
+Najważniejsze strony:
 
-Połączenie Vercel + Render
+- Home
+- Gallery
+- ProductDetails
+- About
+- Cooperation
+- Contact
+- Login
+- Admin
+- Artist
+- ForgotPassword
+- ResetPassword
 
-* zmiana API_URL
-* test logowania online
-* test uploadu zdjęć online
+---
 
-## Priorytet 3
+# Zrealizowane etapy
 
-MongoDB Atlas
+✅ JWT
 
-* migracja users.json
-* migracja products.json
+✅ Role użytkowników
 
-## Priorytet 4
+✅ Reset hasła
 
-Prawdziwa poczta email
+✅ MongoDB Atlas
 
-* Gmail SMTP lub domena arscoloris.pl
-* wysyłka linków resetu hasła
+✅ Mongoose
+
+✅ Migracja produktów z JSON do MongoDB
+
+✅ Cloudinary
+
+✅ CRUD produktów
+
+✅ Zarządzanie zdjęciami
+
+✅ Liczniki legacyId
+
+✅ Refaktoryzacja kontrolerów
+
+---
+
+# Aktualna architektura
+
+```
+Frontend (React)
+        │
+        ▼
+Express API
+        │
+        ├── JWT
+        ├── Middleware
+        ├── Controllers
+        ├── Routes
+        ├── Mongoose
+        │
+        ├── MongoDB Atlas
+        └── Cloudinary
+```
+
+---
+
+# Kolejne etapy
+
+## Etap 1
+
+Refaktoryzacja projektu
+
+- uporządkowanie katalogów
+- wydzielenie wspólnych funkcji
+- globalny middleware błędów
+- walidacja danych
+- ujednolicenie odpowiedzi API
+
+---
+
+## Etap 2
+
+Migracja użytkowników do MongoDB
+
+- usunięcie users.json
+- model User
+- pełna obsługa użytkowników przez Mongoose
+
+---
+
+## Etap 3
+
+Deployment
+
+Backend:
+
+- Render
+
+Frontend:
+
+- Vercel
+
+Konfiguracja:
+
+- MongoDB Atlas
+- Cloudinary
+- zmienne środowiskowe
+
+---
+
+## Etap 4
+
+Jakość projektu
+
+- Docker
+- GitHub Actions
+- automatyczne testy
+- backup danych
+- monitoring
 
 ---
 
 # Ostatni stabilny punkt
 
-Wersja lokalna:
+Backend:
 
-* JWT działa
-* Cloudinary działa
-* Admin działa
-* Artist działa
-* Upload zdjęć działa
-* Reset hasła działa
+✅ MongoDB Atlas
 
-Projekt gotowy do wdrożenia backendu online.
+✅ CRUD produktów
+
+✅ Cloudinary
+
+✅ JWT
+
+✅ Reset hasła
+
+✅ Role użytkowników
+
+Frontend:
+
+✅ Panel Administratora
+
+✅ Panel Artysty
+
+✅ Galeria produktów
+
+✅ Zarządzanie zdjęciami
+
+Projekt znajduje się na etapie stabilizacji po zakończonej migracji produktów do MongoDB i jest gotowy do kolejnych prac refaktoryzacyjnych oraz przygotowania do wdrożenia produkcyjnego.
