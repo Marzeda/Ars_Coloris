@@ -3,14 +3,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
+const config = require("../config/appConfig");
+
 const User = require("../models/User");
 const { createTransporter } = require("../mail");
-
-const JWT_SECRET =
-    process.env.JWT_SECRET || "ars_coloris_secret_key";
-
-const FRONTEND_URL =
-    process.env.FRONTEND_URL || "http://localhost:3000";
 
 const MAX_LOGIN_ATTEMPTS = 3;
 const ACCOUNT_LOCK_TIME_MS = 2 * 60 * 60 * 1000;
@@ -109,9 +105,9 @@ const loginUser = async (req, res) => {
                 username: user.username,
                 role: user.role
             },
-            JWT_SECRET,
+            config.jwt.secret,
             {
-                expiresIn: "2h"
+                expiresIn: config.jwt.expiresIn
             }
         );
 
@@ -178,7 +174,7 @@ const forgotPassword = async (req, res) => {
         await user.save();
 
         const resetLink =
-            `${FRONTEND_URL}/reset-password/${resetToken}`;
+            `${config.app.frontendUrl}/reset-password/${resetToken}`
 
         const transporter =
             await createTransporter();

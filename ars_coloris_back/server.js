@@ -9,10 +9,10 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/userRoutes");
+const config = require("./config/appConfig");
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
     "http://localhost:3000",
@@ -49,11 +49,13 @@ const startServer = async () => {
     try {
         await connectDB();
 
-        app.listen(PORT, () => {
+
+        app.listen(config.app.port, () => {
             console.log(
-                `Serwer działa na porcie ${PORT}`
+                `Serwer działa na porcie ${config.app.port}`
             );
         });
+
     } catch (error) {
         console.error(
             "Nie udało się uruchomić serwera:",
