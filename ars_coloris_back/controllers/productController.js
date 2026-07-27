@@ -1,17 +1,13 @@
 const Product = require("../models/Product");
 
-const {
-    cloudinary
-} = require("../cloudinaryConfig");
 
 const productService = require(
     "../services/productService"
 );
 
-const {
-    getCloudinaryPublicId
-} = require("../utils/cloudinaryUtils");
-
+const productImageService = require(
+    "../services/productImageService"
+);
 const getProducts = async (req, res) => {
     try {
         const products =
@@ -171,41 +167,9 @@ const deleteProduct = async (req, res) => {
                 ? product.images
                 : [];
 
-        for (const imagePath of images) {
-            const publicId =
-                getCloudinaryPublicId(imagePath);
-
-            if (!publicId) {
-                console.warn(
-                    "Nie rozpoznano public_id:",
-                    imagePath
-                );
-
-                continue;
-            }
-
-            const result =
-                await cloudinary.uploader.destroy(
-                    publicId,
-                    {
-                        invalidate: true,
-                        resource_type: "image"
-                    }
-                );
-
-            if (
-                result.result !== "ok" &&
-                result.result !== "not found"
-            ) {
-                return res.status(502).json({
-                    success: false,
-                    message:
-                        `Cloudinary nie usunęło zdjęcia: ${publicId}`,
-                    cloudinaryResult:
-                    result.result
-                });
-            }
-        }
+        await productImageService.deleteImages(
+            images
+        );
 
         await product.deleteOne();
 
@@ -220,14 +184,17 @@ const deleteProduct = async (req, res) => {
             error
         );
 
-        return res.status(500).json({
-            success: false,
-            message:
-                "Nie udało się usunąć produktu."
-        });
+        return res
+            .status(error.status || 500)
+            .json({
+                success: false,
+                message:
+                    error.status
+                        ? error.message
+                        : "Nie udało się usunąć produktu."
+            });
     }
 };
-
 module.exports = {
     getProducts,
     getProductById,
