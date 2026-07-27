@@ -5,6 +5,10 @@ const nodemailer = require("nodemailer");
 
 const config = require("../config/appConfig");
 
+const authService = require(
+    "../services/authService"
+);
+
 const User = require("../models/User");
 const { createTransporter } = require("../mail");
 
@@ -17,122 +21,25 @@ const normalizeUsername = (username) => {
 };
 
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).json({
-            success: false,
-            message: "Podaj login i hasło"
-        });
-    }
-
     try {
-        const normalizedUsername =
-            normalizeUsername(username);
+        const result =
+            await authService.login(req.body);
 
-        const user = await User.findOne({
-            username: normalizedUsername,
-            isActive: true
-        });
-
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "Nieprawidłowy login lub hasło"
-            });
-        }
-
-        const now = new Date();
-
-        if (
-            user.lockUntil &&
-            user.lockUntil.getTime() > now.getTime()
-        ) {
-            const remainingMinutes = Math.ceil(
-                (
-                    user.lockUntil.getTime() -
-                    now.getTime()
-                ) / 60000
-            );
-
-            return res.status(403).json({
-                success: false,
-                message:
-                    `Konto zablokowane. Spróbuj ponownie za ${remainingMinutes} minut.`
-            });
-        }
-
-        const passwordMatches =
-            await bcrypt.compare(
-                password,
-                user.password
-            );
-
-        if (!passwordMatches) {
-            user.failedLoginAttempts += 1;
-
-            if (
-                user.failedLoginAttempts >=
-                MAX_LOGIN_ATTEMPTS
-            ) {
-                user.lockUntil = new Date(
-                    Date.now() +
-                    ACCOUNT_LOCK_TIME_MS
-                );
-
-                user.failedLoginAttempts = 0;
-            }
-
-            await user.save();
-
-            return res.status(401).json({
-                success: false,
-                message: "Nieprawidłowy login lub hasło"
-            });
-        }
-
-        user.failedLoginAttempts = 0;
-        user.lockUntil = null;
-
-        await user.save();
-
-        const token = jwt.sign(
-            {
-                id:
-                    user.legacyId ||
-                    user._id.toString(),
-
-                username: user.username,
-                role: user.role
-            },
-            config.jwt.secret,
-            {
-                expiresIn: config.jwt.expiresIn
-            }
-        );
-
-        return res.json({
-            success: true,
-            token,
-            user: {
-                id:
-                    user.legacyId ||
-                    user._id.toString(),
-
-                username: user.username,
-                role: user.role
-            }
-        });
+        return res.json(result);
     } catch (error) {
         console.error("Błąd logowania:", error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Błąd logowania"
-        });
+        return res
+            .status(error.status || 500)
+            .json({
+                success: false,
+                message:
+                    error.status
+                        ? error.message
+                        : "Błąd logowania"
+            });
     }
 };
-
 const forgotPassword = async (req, res) => {
     const { username } = req.body;
 
