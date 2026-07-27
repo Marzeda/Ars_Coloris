@@ -8,32 +8,33 @@ const {
     cloudinary
 } = require("../cloudinaryConfig");
 
+const productService = require(
+    "../services/productService"
+);
+
 const {
     getCloudinaryPublicId
 } = require("../utils/cloudinaryUtils");
 
 
+
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find({
-            isPublished: true
-        }).sort({
-            displayOrder: 1,
-            createdAt: 1
-        });
+        const products =
+            await productService.getProducts();
 
-        return res.json(
-            products.map(mapProductForFrontend)
-        );
+        return res.json(products);
+
     } catch (error) {
         console.error(
-            "Błąd pobierania produktów z MongoDB:",
+            "Błąd pobierania produktów:",
             error
         );
 
         return res.status(500).json({
             success: false,
-            message: "Błąd odczytu produktów"
+            message:
+                "Błąd odczytu produktów"
         });
     }
 };

@@ -9,14 +9,59 @@ function Gallery() {
     const [sortOption, setSortOption] = useState("default");
     const [searchTerm, setSearchTerm] = useState("");
 
+
+
     useEffect(() => {
         fetch(`${API_URL}/api/products`)
             .then((res) => res.json())
             .then((data) => setProducts(data))
             .catch((err) => console.error("Błąd pobierania produktów:", err));
     }, []);
+/*
 
+//test
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/products`
+                );
 
+                if (!response.ok) {
+                    throw new Error(
+                        `Błąd HTTP: ${response.status}`
+                    );
+                }
+
+                const data = await response.json();
+
+                console.log(
+                    "Produkty pobrane z API:",
+                    data
+                );
+
+                if (!Array.isArray(data)) {
+                    throw new Error(
+                        "API nie zwróciło tablicy produktów"
+                    );
+                }
+
+                setProducts(data);
+            } catch (error) {
+                console.error(
+                    "Błąd pobierania produktów:",
+                    error
+                );
+
+                setProducts([]);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+//endtest
+*/
     const categories = [
         "Wszystkie",
         "Stoliki",

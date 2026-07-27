@@ -1,3 +1,4 @@
+const nodemailer = require("nodemailer");
 const { createTransporter } = require("../mail");
 
 const sendPasswordResetEmail = async (
@@ -28,7 +29,10 @@ const sendPasswordResetEmail = async (
         `
     });
 
-    return info;
+    return {
+        previewUrl:
+            nodemailer.getTestMessageUrl(info)
+    };
 };
 
 module.exports = {
