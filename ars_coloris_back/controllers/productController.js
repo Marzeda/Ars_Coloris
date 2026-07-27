@@ -1,8 +1,4 @@
 const Product = require("../models/Product");
-const getNextSequence = require("../utils/getNextSequence");
-const mapProductForFrontend = require(
-    "../utils/mapProductForFrontend"
-);
 
 const {
     cloudinary
@@ -16,15 +12,12 @@ const {
     getCloudinaryPublicId
 } = require("../utils/cloudinaryUtils");
 
-
-
 const getProducts = async (req, res) => {
     try {
         const products =
             await productService.getProducts();
 
         return res.json(products);
-
     } catch (error) {
         console.error(
             "Błąd pobierania produktów:",
@@ -33,8 +26,7 @@ const getProducts = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message:
-                "Błąd odczytu produktów"
+            message: "Błąd odczytu produktów"
         });
     }
 };
@@ -47,7 +39,6 @@ const getProductById = async (req, res) => {
             );
 
         return res.json(product);
-
     } catch (error) {
         console.error(
             "Błąd pobierania produktu:",
@@ -65,80 +56,17 @@ const getProductById = async (req, res) => {
             });
     }
 };
+
 const createProduct = async (req, res) => {
     try {
-        const {
-            name,
-            category,
-            price,
-            availability,
-            deliveryTime,
-            description,
-            images = []
-        } = req.body;
-
-        if (
-            !name ||
-            !category ||
-            price === undefined ||
-            price === null ||
-            !description
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Brakuje wymaganych pól."
-            });
-        }
-
-        const parsedPrice = Number(price);
-
-        if (
-            !Number.isFinite(parsedPrice) ||
-            parsedPrice < 0
-        ) {
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Cena produktu jest nieprawidłowa."
-            });
-        }
-
-        const legacyId = await getNextSequence(
-            "product"
-        );
-
-        const product = new Product({
-            legacyId,
-            name: String(name).trim(),
-            category: String(category).trim(),
-            price: parsedPrice,
-
-            availability:
-                typeof availability === "string"
-                    ? availability.trim()
-                    : "Dostępny",
-
-            deliveryTime:
-                typeof deliveryTime === "string"
-                    ? deliveryTime.trim()
-                    : "",
-
-            description: String(description).trim(),
-
-            images: Array.isArray(images)
-                ? images
-                : [],
-
-            isFeatured: false,
-            isPublished: true,
-            displayOrder: 0
-        });
-
-        await product.save();
+        const product =
+            await productService.createProduct(
+                req.body
+            );
 
         return res.status(201).json({
             success: true,
-            product: mapProductForFrontend(product)
+            product
         });
     } catch (error) {
         console.error(
@@ -162,170 +90,31 @@ const createProduct = async (req, res) => {
             });
         }
 
-        return res.status(500).json({
-            success: false,
-            message:
-                "Nie udało się utworzyć produktu."
-        });
+        return res
+            .status(error.status || 500)
+            .json({
+                success: false,
+                message:
+                    error.status
+                        ? error.message
+                        : "Nie udało się utworzyć produktu."
+            });
     }
 };
 
 const updateProduct = async (req, res) => {
     try {
-        const productId = Number(req.params.id);
+        const product =
+            await productService.updateProduct(
+                Number(req.params.id),
+                req.body
+            );
 
-        if (!Number.isInteger(productId)) {
-            return res.status(400).json({
-                success: false,
-                message: "Nieprawidłowe ID produktu"
-            });
-        }
-
-        const product = await Product.findOne({
-            legacyId: productId
-        });
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Nie znaleziono produktu"
-            });
-        }
-
-        const {
-            name,
-            category,
-            price,
-            availability,
-            deliveryTime,
-            description,
-            images,
-            isFeatured,
-            isPublished,
-            displayOrder
-        } = req.body;
-
-        if (name !== undefined) {
-            const trimmedName =
-                String(name).trim();
-
-            if (!trimmedName) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Nazwa produktu nie może być pusta."
-                });
-            }
-
-            product.name = trimmedName;
-        }
-
-        if (category !== undefined) {
-            const trimmedCategory =
-                String(category).trim();
-
-            if (!trimmedCategory) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Kategoria produktu nie może być pusta."
-                });
-            }
-
-            product.category = trimmedCategory;
-        }
-
-        if (price !== undefined) {
-            const parsedPrice = Number(price);
-
-            if (
-                !Number.isFinite(parsedPrice) ||
-                parsedPrice < 0
-            ) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Cena produktu jest nieprawidłowa."
-                });
-            }
-
-            product.price = parsedPrice;
-        }
-
-        if (availability !== undefined) {
-            product.availability =
-                String(availability).trim();
-        }
-
-        if (deliveryTime !== undefined) {
-            product.deliveryTime =
-                String(deliveryTime).trim();
-        }
-
-        if (description !== undefined) {
-            const trimmedDescription =
-                String(description).trim();
-
-            if (!trimmedDescription) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Opis produktu nie może być pusty."
-                });
-            }
-
-            product.description =
-                trimmedDescription;
-        }
-
-        if (images !== undefined) {
-            if (!Array.isArray(images)) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Pole images musi być tablicą."
-                });
-            }
-
-            product.images = images;
-        }
-
-        if (isFeatured !== undefined) {
-            product.isFeatured =
-                Boolean(isFeatured);
-        }
-
-        if (isPublished !== undefined) {
-            product.isPublished =
-                Boolean(isPublished);
-        }
-
-        if (displayOrder !== undefined) {
-            const parsedDisplayOrder =
-                Number(displayOrder);
-
-            if (
-                !Number.isFinite(
-                    parsedDisplayOrder
-                )
-            ) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Kolejność wyświetlania jest nieprawidłowa."
-                });
-            }
-
-            product.displayOrder =
-                parsedDisplayOrder;
-        }
-
-        await product.save();
-
-        // Frontend oczekuje bezpośrednio obiektu produktu.
-        return res.json(
-            mapProductForFrontend(product)
-        );
+        /*
+         * Frontend oczekuje bezpośrednio
+         * obiektu produktu.
+         */
+        return res.json(product);
     } catch (error) {
         console.error(
             "Błąd aktualizacji produktu:",
@@ -340,25 +129,28 @@ const updateProduct = async (req, res) => {
             });
         }
 
-        return res.status(500).json({
-            success: false,
-            message:
-                "Nie udało się zaktualizować produktu."
-        });
+        return res
+            .status(error.status || 500)
+            .json({
+                success: false,
+                message:
+                    error.status
+                        ? error.message
+                        : "Nie udało się zaktualizować produktu."
+            });
     }
 };
 
-
-
 const deleteProduct = async (req, res) => {
-
     try {
-        const productId = Number(req.params.id);
+        const productId =
+            Number(req.params.id);
 
         if (!Number.isInteger(productId)) {
             return res.status(400).json({
                 success: false,
-                message: "Nieprawidłowe ID produktu"
+                message:
+                    "Nieprawidłowe ID produktu"
             });
         }
 
@@ -369,13 +161,15 @@ const deleteProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({
                 success: false,
-                message: "Nie znaleziono produktu"
+                message:
+                    "Nie znaleziono produktu"
             });
         }
 
-        const images = Array.isArray(product.images)
-            ? product.images
-            : [];
+        const images =
+            Array.isArray(product.images)
+                ? product.images
+                : [];
 
         for (const imagePath of images) {
             const publicId =
@@ -390,11 +184,6 @@ const deleteProduct = async (req, res) => {
                 continue;
             }
 
-            console.log(
-                "Usuwanie z Cloudinary:",
-                publicId
-            );
-
             const result =
                 await cloudinary.uploader.destroy(
                     publicId,
@@ -404,17 +193,16 @@ const deleteProduct = async (req, res) => {
                     }
                 );
 
-            console.log(
-                "Wynik Cloudinary:",
-                result
-            );
-
-            if (result.result !== "ok") {
+            if (
+                result.result !== "ok" &&
+                result.result !== "not found"
+            ) {
                 return res.status(502).json({
                     success: false,
                     message:
                         `Cloudinary nie usunęło zdjęcia: ${publicId}`,
-                    cloudinaryResult: result.result
+                    cloudinaryResult:
+                    result.result
                 });
             }
         }
@@ -439,7 +227,6 @@ const deleteProduct = async (req, res) => {
         });
     }
 };
-
 
 module.exports = {
     getProducts,
