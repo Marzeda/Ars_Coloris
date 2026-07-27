@@ -41,43 +41,30 @@ const getProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
     try {
-        const productId = Number(req.params.id);
+        const product =
+            await productService.getProductById(
+                Number(req.params.id)
+            );
 
-        if (!Number.isInteger(productId)) {
-            return res.status(400).json({
-                success: false,
-                message: "Nieprawidłowe ID produktu"
-            });
-        }
+        return res.json(product);
 
-        const product = await Product.findOne({
-            legacyId: productId,
-            isPublished: true
-        });
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Nie znaleziono produktu"
-            });
-        }
-
-        return res.json(
-            mapProductForFrontend(product)
-        );
     } catch (error) {
         console.error(
-            "Błąd pobierania produktu z MongoDB:",
+            "Błąd pobierania produktu:",
             error
         );
 
-        return res.status(500).json({
-            success: false,
-            message: "Błąd odczytu produktu"
-        });
+        return res
+            .status(error.status || 500)
+            .json({
+                success: false,
+                message:
+                    error.status
+                        ? error.message
+                        : "Błąd odczytu produktu"
+            });
     }
 };
-
 const createProduct = async (req, res) => {
     try {
         const {
