@@ -10,6 +10,9 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/userRoutes");
 const config = require("./config/appConfig");
+const errorMiddleware = require(
+    "./middleware/errorMiddleware"
+);
 
 const app = express();
 
@@ -44,6 +47,18 @@ app.get("/", (req, res) => {
         "Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech"
     );
 });
+
+app.use("/api", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
+
+app.get("/", (req, res) => {
+    return res.send(
+        "Uruchomiono server. Witaj w Ars Coloris API! by Aga Szelech"
+    );
+});
+
+app.use(errorMiddleware);
 
 const startServer = async () => {
     try {

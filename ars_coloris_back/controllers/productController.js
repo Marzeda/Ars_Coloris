@@ -1,3 +1,7 @@
+const asyncHandler = require(
+    "../middleware/asyncHandler"
+);
+
 const Product = require("../models/Product");
 
 
@@ -8,53 +12,27 @@ const productService = require(
 const productImageService = require(
     "../services/productImageService"
 );
-const getProducts = async (req, res) => {
-    try {
+const getProducts = asyncHandler(
+    async (req, res) => {
         const products =
             await productService.getProducts();
 
         return res.json(products);
-    } catch (error) {
-        console.error(
-            "Błąd pobierania produktów:",
-            error
-        );
-
-        return res.status(500).json({
-            success: false,
-            message: "Błąd odczytu produktów"
-        });
     }
-};
-
-const getProductById = async (req, res) => {
-    try {
+);
+const getProductById = asyncHandler(
+    async (req, res) => {
         const product =
             await productService.getProductById(
                 Number(req.params.id)
             );
 
         return res.json(product);
-    } catch (error) {
-        console.error(
-            "Błąd pobierania produktu:",
-            error
-        );
-
-        return res
-            .status(error.status || 500)
-            .json({
-                success: false,
-                message:
-                    error.status
-                        ? error.message
-                        : "Błąd odczytu produktu"
-            });
     }
-};
+);
 
-const createProduct = async (req, res) => {
-    try {
+const createProduct = asyncHandler(
+    async (req, res) => {
         const product =
             await productService.createProduct(
                 req.body
@@ -64,79 +42,19 @@ const createProduct = async (req, res) => {
             success: true,
             product
         });
-    } catch (error) {
-        console.error(
-            "Błąd tworzenia produktu:",
-            error
-        );
-
-        if (error.code === 11000) {
-            return res.status(409).json({
-                success: false,
-                message:
-                    "Produkt z takim identyfikatorem już istnieje."
-            });
-        }
-
-        if (error.name === "ValidationError") {
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Dane produktu są nieprawidłowe."
-            });
-        }
-
-        return res
-            .status(error.status || 500)
-            .json({
-                success: false,
-                message:
-                    error.status
-                        ? error.message
-                        : "Nie udało się utworzyć produktu."
-            });
     }
-};
-
-const updateProduct = async (req, res) => {
-    try {
+);
+const updateProduct = asyncHandler(
+    async (req, res) => {
         const product =
             await productService.updateProduct(
                 Number(req.params.id),
                 req.body
             );
 
-        /*
-         * Frontend oczekuje bezpośrednio
-         * obiektu produktu.
-         */
         return res.json(product);
-    } catch (error) {
-        console.error(
-            "Błąd aktualizacji produktu:",
-            error
-        );
-
-        if (error.name === "ValidationError") {
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Dane produktu są nieprawidłowe."
-            });
-        }
-
-        return res
-            .status(error.status || 500)
-            .json({
-                success: false,
-                message:
-                    error.status
-                        ? error.message
-                        : "Nie udało się zaktualizować produktu."
-            });
     }
-};
-
+);
 const deleteProduct = async (req, res) => {
     try {
         const productId =
