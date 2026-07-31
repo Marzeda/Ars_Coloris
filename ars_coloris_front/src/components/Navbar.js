@@ -1,70 +1,126 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
 import logo from "../assets/hero_mosaic_logo.jpg";
+import ImageModal from "./ImageModal";
 
 function Navbar() {
+    const [showLogo, setShowLogo] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const closeMenu = () => {
         setMenuOpen(false);
     };
 
+    const openLogoModal = () => {
+        closeMenu();
+        setShowLogo(true);
+    };
+
+    const getLinkClassName = ({ isActive }) => {
+        return isActive ? "active-nav-link" : "";
+    };
+
     return (
-        <nav className="navbar">
-            <Link to="/" className="logo-link" onClick={closeMenu}>
-                <img
-                    src={logo}
-                    alt="Ars Coloris"
-                    className="navbar-logo"
-                />
-            </Link>
-
-            <button
-                className="hamburger"
-                onClick={() => setMenuOpen(!menuOpen)}
+        <>
+            <nav
+                className="navbar"
+                aria-label="Główna nawigacja"
             >
-                ☰
-            </button>
+                <button
+                    type="button"
+                    className="logo-link"
+                    onClick={openLogoModal}
+                    aria-label="Powiększ logo Ars Coloris"
+                >
+                    <img
+                        src={logo}
+                        alt="Ars Coloris"
+                        className="navbar-logo"
+                    />
+                </button>
 
-            <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
-                <li>
-                    <Link to="/" onClick={closeMenu}>
-                        Strona główna
-                    </Link>
-                </li>
+                <button
+                    type="button"
+                    className="hamburger"
+                    onClick={() => setMenuOpen((current) => !current)}
+                    aria-label={
+                        menuOpen
+                            ? "Zamknij menu"
+                            : "Otwórz menu"
+                    }
+                    aria-expanded={menuOpen}
+                    aria-controls="main-navigation"
+                >
+                    <span aria-hidden="true">
+                        {menuOpen ? "✕" : "☰"}
+                    </span>
+                </button>
 
-                <li>
-                    <Link to="/gallery" onClick={closeMenu}>
-                        Galeria
-                    </Link>
-                </li>
-				
-				<li>
-                    <Link to="/process" onClick={closeMenu}>
-                        Jak powstają mozaiki
-                    </Link>
-                </li>
-				
-				<li>
-                    <Link to="/projects" onClick={closeMenu}>
-                        Zrealizowane projekty
-                    </Link>
-                </li>
+                <ul
+                    id="main-navigation"
+                    className={`nav-links ${
+                        menuOpen ? "open" : ""
+                    }`}
+                >
+                    <li>
+                        <NavLink
+                            to="/"
+                            end
+                            onClick={closeMenu}
+                            className={getLinkClassName}
+                        >
+                            Strona główna
+                        </NavLink>
+                    </li>
 
-                <li>
-                    <Link to="/cooperation" onClick={closeMenu}>
-                        Współpraca
-                    </Link>
-                </li>
+                    <li>
+                        <NavLink
+                            to="/gallery"
+                            onClick={closeMenu}
+                            className={getLinkClassName}
+                        >
+                            Galeria
+                        </NavLink>
+                    </li>
 
-                <li>
-                    <Link to="/contact" onClick={closeMenu}>
-                        Kontakt
-                    </Link>
-                </li>
-            </ul>
-        </nav>
+                    <li>
+                        <NavLink
+                            to="/cooperation"
+                            onClick={closeMenu}
+                            className={getLinkClassName}
+                        >
+                            Współpraca
+                        </NavLink>
+                    </li>
+
+                    <li>
+                        <NavLink
+                            to="/about"
+                            onClick={closeMenu}
+                            className={getLinkClassName}
+                        >
+                            O artystce
+                        </NavLink>
+                    </li>
+
+                    <li>
+                        <NavLink
+                            to="/contact"
+                            onClick={closeMenu}
+                            className={getLinkClassName}
+                        >
+                            Kontakt
+                        </NavLink>
+                    </li>
+                </ul>
+            </nav>
+
+            <ImageModal
+                image={showLogo ? logo : null}
+                onClose={() => setShowLogo(false)}
+            />
+        </>
     );
 }
 

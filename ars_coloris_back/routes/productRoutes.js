@@ -1,9 +1,4 @@
 const express = require("express");
-const multer = require("multer");
-
-const {
-    storage: cloudinaryStorage
-} = require("../cloudinaryConfig");
 
 const {
     getProducts,
@@ -26,11 +21,11 @@ const {
     verifyPanelUser
 } = require("../middleware/authMiddleware");
 
-const router = express.Router();
+const upload = require(
+    "../middleware/uploadMiddleware"
+);
 
-const upload = multer({
-    storage: cloudinaryStorage
-});
+const router = express.Router();
 
 router.get(
     "/",

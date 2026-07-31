@@ -1605,3 +1605,14 @@ body {
 .forgot-password-link a:hover {
     text-decoration: underline;
 }
+
+.logo-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.active-nav-link {
+    font-weight: 700;
+}

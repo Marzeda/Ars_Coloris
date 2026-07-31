@@ -27,12 +27,19 @@ function ProductForm({
         if (productToEdit) {
             setFormData({
                 name: productToEdit.name || "",
-                category: productToEdit.category || "Dekoracje",
+                category:
+                    productToEdit.category ||
+                    "Dekoracje",
                 price: productToEdit.price || "",
-                availability: productToEdit.availability || "Dostępny",
+                availability:
+                    productToEdit.availability ||
+                    "Dostępny",
                 deliveryTime:
-                    productToEdit.deliveryTime || "3-5 dni roboczych",
-                description: productToEdit.description || ""
+                    productToEdit.deliveryTime ||
+                    "3-5 dni roboczych",
+                description:
+                    productToEdit.description ||
+                    ""
             });
 
             setImages(productToEdit.images || []);
@@ -40,8 +47,14 @@ function ProductForm({
     }, [productToEdit]);
 
     const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
-        if (imagePath.startsWith("http")) return imagePath;
+        if (!imagePath) {
+            return "";
+        }
+
+        if (imagePath.startsWith("http")) {
+            return imagePath;
+        }
+
         return `${API_URL}${imagePath}`;
     };
 
@@ -49,15 +62,21 @@ function ProductForm({
         return localStorage.getItem("token");
     };
 
-    const handleChange = (e) => {
+    const handleChange = (event) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [event.target.name]: event.target.value
         });
     };
 
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
+    const handleFileChange = (event) => {
+        const files = Array.from(
+            event.target.files
+        );
+
+        previewImages.forEach((preview) => {
+            URL.revokeObjectURL(preview.url);
+        });
 
         setSelectedFiles(files);
 
@@ -85,69 +104,116 @@ function ProductForm({
             {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${getToken()}`
+                    Authorization:
+                        `Bearer ${getToken()}`
                 },
                 body: uploadData
             }
         );
 
-        return response.json();
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Nie udało się przesłać zdjęć."
+            );
+        }
+
+        return data;
     };
 
-    const handleSetMainImage = async (imagePath) => {
+    const handleSetMainImage = async (
+        imagePath
+    ) => {
         if (!productToEdit) {
             return;
         }
 
-        const response = await fetch(
-            `${API_URL}/api/products/${productToEdit.id}/main-image`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${getToken()}`
-                },
-                body: JSON.stringify({
-                    imagePath
-                })
+        try {
+            const response = await fetch(
+                `${API_URL}/api/products/${productToEdit.id}/main-image`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        Authorization:
+                            `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({
+                        imagePath
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Nie udało się ustawić zdjęcia głównego."
+                );
             }
-        );
 
-        const data = await response.json();
-
-        if (response.ok) {
             setImages(data.images);
 
             onProductUpdated({
                 ...productToEdit,
                 images: data.images
             });
+        } catch (error) {
+            alert(
+                error.message ||
+                "Nie udało się ustawić zdjęcia głównego."
+            );
         }
     };
 
-    const handleDeleteImage = async (imagePath) => {
+    const handleDeleteImage = async (
+        imagePath
+    ) => {
         if (!productToEdit) {
             return;
         }
 
-        const response = await fetch(
-            `${API_URL}/api/products/${productToEdit.id}/images`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${getToken()}`
-                },
-                body: JSON.stringify({
-                    imagePath
-                })
+        try {
+            const response = await fetch(
+                `${API_URL}/api/products/${productToEdit.id}/images`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        Authorization:
+                            `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({
+                        imagePath
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Nie udało się usunąć zdjęcia."
+                );
             }
-        );
 
-        const data = await response.json();
-
-        if (response.ok) {
             setImages(data.images);
+
+            onProductUpdated({
+                ...productToEdit,
+                images: data.images
+            });
+        } catch (error) {
+            alert(
+                error.message ||
+                "Nie udało się usunąć zdjęcia."
+            );
         }
     };
 
@@ -160,59 +226,100 @@ function ProductForm({
         setPreviewImages([]);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        const productData = {
-            ...formData,
-            price: Number(formData.price),
-            images
-        };
+        try {
+            const productData = {
+                ...formData,
+                price: Number(formData.price),
+                images
+            };
 
-        const url = isEditMode
-            ? `${API_URL}/api/products/${productToEdit.id}`
-            : `${API_URL}/api/products`;
+            const url = isEditMode
+                ? `${API_URL}/api/products/${productToEdit.id}`
+                : `${API_URL}/api/products`;
 
-        const method = isEditMode ? "PUT" : "POST";
+            const method = isEditMode
+                ? "PUT"
+                : "POST";
 
-        const response = await fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getToken()}`
-            },
-            body: JSON.stringify(productData)
-        });
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    "Content-Type":
+                        "application/json",
+                    Authorization:
+                        `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(productData)
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (!response.ok) {
-            alert(data.message || "Wystąpił błąd zapisu produktu.");
-            return;
-        }
-
-        if (isEditMode) {
-            const uploadResult = await uploadImages(productToEdit.id);
-
-            if (uploadResult && uploadResult.product) {
-                setImages(uploadResult.product.images || []);
-                clearSelectedFiles();
-                return;
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Wystąpił błąd zapisu produktu."
+                );
             }
 
-            onProductUpdated(data);
-        } else {
-            const newProduct = data.product;
-            const uploadResult = await uploadImages(newProduct.id);
+            if (isEditMode) {
+                const uploadResult =
+                    await uploadImages(
+                        productToEdit.id
+                    );
 
-            if (uploadResult && uploadResult.product) {
-                onProductAdded(uploadResult.product);
+                if (
+                    uploadResult &&
+                    uploadResult.product
+                ) {
+                    const updatedProduct =
+                        uploadResult.product;
+
+                    setImages(
+                        updatedProduct.images ||
+                        []
+                    );
+
+                    clearSelectedFiles();
+
+                    onProductUpdated(
+                        updatedProduct
+                    );
+
+                    return;
+                }
+
+                onProductUpdated(data);
             } else {
-                onProductAdded(newProduct);
-            }
-        }
+                const newProduct =
+                    data.product;
 
-        clearSelectedFiles();
+                const uploadResult =
+                    await uploadImages(
+                        newProduct.id
+                    );
+
+                if (
+                    uploadResult &&
+                    uploadResult.product
+                ) {
+                    onProductAdded(
+                        uploadResult.product
+                    );
+                } else {
+                    onProductAdded(newProduct);
+                }
+            }
+
+            clearSelectedFiles();
+        } catch (error) {
+            alert(
+                error.message ||
+                "Wystąpił nieoczekiwany błąd."
+            );
+        }
     };
 
     return (
@@ -221,7 +328,9 @@ function ProductForm({
             onSubmit={handleSubmit}
         >
             <h2>
-                {isEditMode ? "Edytuj produkt" : "Dodaj produkt"}
+                {isEditMode
+                    ? "Edytuj produkt"
+                    : "Dodaj produkt"}
             </h2>
 
             <input
@@ -237,9 +346,17 @@ function ProductForm({
                 value={formData.category}
                 onChange={handleChange}
             >
-                <option>Mozaiki ścienne</option>
-                <option>Stoliki mozaikowe</option>
-                <option>Mozaiki ogrodowe</option>
+                <option>
+                    Mozaiki ścienne
+                </option>
+
+                <option>
+                    Stoliki mozaikowe
+                </option>
+
+                <option>
+                    Mozaiki ogrodowe
+                </option>
             </select>
 
             <input
@@ -276,53 +393,80 @@ function ProductForm({
                 required
             />
 
-            {isEditMode && images.length > 0 && (
-                <div className="product-images-section">
-                    <h3>Zdjęcia produktu</h3>
+            {isEditMode &&
+                images.length > 0 && (
+                    <div className="product-images-section">
+                        <h3>
+                            Zdjęcia produktu
+                        </h3>
 
-                    <div className="admin-images-list">
-                        {images.map((image, index) => (
-                            <div
-                                className={`admin-image-item ${
-                                    index === 0 ? "main-image-item" : ""
-                                }`}
-                                key={image}
-                            >
-                                <img
-                                    src={getImageUrl(image)}
-                                    alt="Zdjęcie produktu"
-                                />
-
-                                {index === 0 && (
-                                    <div className="main-image-label">
-                                        Zdjęcie główne
-                                    </div>
-                                )}
-
-                                {index !== 0 && (
-                                    <button
-                                        type="button"
-                                        className="main-image-button"
-                                        onClick={() =>
-                                            handleSetMainImage(image)
+                        <div className="admin-images-list">
+                            {images.map(
+                                (
+                                    image,
+                                    index
+                                ) => (
+                                    <div
+                                        className={`admin-image-item ${
+                                            index ===
+                                            0
+                                                ? "main-image-item"
+                                                : ""
+                                        }`}
+                                        key={
+                                            image
                                         }
                                     >
-                                        Ustaw jako główne
-                                    </button>
-                                )}
+                                        <img
+                                            src={getImageUrl(
+                                                image
+                                            )}
+                                            alt="Zdjęcie produktu"
+                                        />
 
-                                <button
-                                    type="button"
-                                    className="delete-image-button"
-                                    onClick={() => handleDeleteImage(image)}
-                                >
-                                    Usuń zdjęcie
-                                </button>
-                            </div>
-                        ))}
+                                        {index ===
+                                            0 && (
+                                                <div className="main-image-label">
+                                                    Zdjęcie
+                                                    główne
+                                                </div>
+                                            )}
+
+                                        {index !==
+                                            0 && (
+                                                <button
+                                                    type="button"
+                                                    className="main-image-button"
+                                                    onClick={() =>
+                                                        handleSetMainImage(
+                                                            image
+                                                        )
+                                                    }
+                                                >
+                                                    Ustaw
+                                                    jako
+                                                    główne
+                                                </button>
+                                            )}
+
+                                        <button
+                                            type="button"
+                                            className="delete-image-button"
+                                            onClick={() =>
+                                                handleDeleteImage(
+                                                    image
+                                                )
+                                            }
+                                        >
+                                            Usuń
+                                            zdjęcie
+                                        </button>
+                                    </div>
+                                )
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
             <div className="product-images-section">
                 <h3>Dodaj zdjęcia</h3>
@@ -330,35 +474,54 @@ function ProductForm({
                 <input
                     type="file"
                     multiple
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                     onChange={handleFileChange}
                 />
 
-                {previewImages.length > 0 && (
-                    <div className="selected-images-preview">
-                        <p>
-                            Wybrano plików: {previewImages.length}
-                        </p>
+                {previewImages.length >
+                    0 && (
+                        <div className="selected-images-preview">
+                            <p>
+                                Wybrano plików:{" "}
+                                {
+                                    previewImages.length
+                                }
+                            </p>
 
-                        <div className="preview-images-grid">
-                            {previewImages.map((image, index) => (
-                                <div
-                                    key={index}
-                                    className="preview-image-item"
-                                >
-                                    <img
-                                        src={image.url}
-                                        alt={image.file.name}
-                                    />
+                            <div className="preview-images-grid">
+                                {previewImages.map(
+                                    (
+                                        image,
+                                        index
+                                    ) => (
+                                        <div
+                                            key={`${image.file.name}-${index}`}
+                                            className="preview-image-item"
+                                        >
+                                            <img
+                                                src={
+                                                    image.url
+                                                }
+                                                alt={
+                                                    image
+                                                        .file
+                                                        .name
+                                                }
+                                            />
 
-                                    <span>
-                                        {image.file.name}
-                                    </span>
-                                </div>
-                            ))}
+                                            <span>
+                                            {
+                                                image
+                                                    .file
+                                                    .name
+                                            }
+                                        </span>
+                                        </div>
+                                    )
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
             </div>
 
             <div className="product-form-actions">
@@ -366,7 +529,9 @@ function ProductForm({
                     className="save-product-button"
                     type="submit"
                 >
-                    {isEditMode ? "Zapisz zmiany" : "Zapisz produkt"}
+                    {isEditMode
+                        ? "Zapisz zmiany"
+                        : "Zapisz produkt"}
                 </button>
 
                 <button

@@ -1,59 +1,100 @@
+import { Link } from "react-router-dom";
+
 import heroImage from "../assets/hero_mosaic_1.jpg";
 
 function Home() {
     return (
-        <div>
+        <main>
             <section
                 className="hero"
                 style={{
                     backgroundImage: `linear-gradient(
-                        rgba(0,0,0,0.55),
-                        rgba(0,0,0,0.55)
-                    ), url(${heroImage})`,
+                        rgba(0, 0, 0, 0.55),
+                        rgba(0, 0, 0, 0.55)
+                    ), url(${heroImage})`
                 }}
             >
                 <div className="hero-content">
                     <h1>Ręcznie tworzone mozaiki</h1>
 
-                    <h2>Autorskie prace Agnieszki Szelech</h2>
+                    <h2>
+                        Autorskie prace Agnieszki Szelech
+                    </h2>
 
                     <p>
-                        Unikalne mozaiki tworzone z pasją, dbałością o szczegóły i miłością do piękna.
+                        Unikalne mozaiki tworzone z pasją,
+                        dbałością o szczegóły i miłością do
+                        piękna.
                     </p>
 
-                    <a href="/gallery" className="hero-button">
+                    <Link
+                        to="/gallery"
+                        className="hero-button"
+                    >
                         Zobacz galerię
-                    </a>
+                    </Link>
                 </div>
             </section>
 
-            <section className="home-section">
-                <h2>Dlaczego Ars Coloris?</h2>
+            <section
+                className="home-section"
+                aria-labelledby="ars-coloris-features"
+            >
+                <h2 id="ars-coloris-features">
+                    Dlaczego Ars Coloris?
+                </h2>
 
+                <div className="features">
+                    <article className="feature-card">
+                        <div
+                            className="feature-icon"
+                            aria-hidden="true"
+                        >
+                            ♡
+                        </div>
 
-		<div className="features">
-			<div className="feature-card">
-				<div className="feature-icon">♡</div>
-				<h3>Ręczne wykonanie</h3>
-				<p>Każda mozaika jest tworzona ręcznie z najwyższą starannością.</p>
-			</div>
+                        <h3>Ręczne wykonanie</h3>
 
-			<div className="feature-card">
-				<div className="feature-icon">✦</div>
-				<h3>Unikalność</h3>
-				<p>Każda praca jest jedyna w swoim rodzaju i ma własny charakter.</p>
-			</div>
+                        <p>
+                            Każda mozaika jest tworzona ręcznie
+                            z najwyższą starannością.
+                        </p>
+                    </article>
 
-			<div className="feature-card">
-				<div className="feature-icon">✧</div>
-				<h3>Idealne na prezent</h3>
-				<p>Mozaiki Ars Coloris to wyjątkowy prezent, który pozostaje na lata.</p>
-			</div>
-		</div>
+                    <article className="feature-card">
+                        <div
+                            className="feature-icon"
+                            aria-hidden="true"
+                        >
+                            ✦
+                        </div>
 
+                        <h3>Unikalność</h3>
 
+                        <p>
+                            Każda praca jest jedyna w swoim
+                            rodzaju i ma własny charakter.
+                        </p>
+                    </article>
+
+                    <article className="feature-card">
+                        <div
+                            className="feature-icon"
+                            aria-hidden="true"
+                        >
+                            ✧
+                        </div>
+
+                        <h3>Idealne na prezent</h3>
+
+                        <p>
+                            Mozaiki Ars Coloris to wyjątkowy
+                            prezent, który pozostaje na lata.
+                        </p>
+                    </article>
+                </div>
             </section>
-        </div>
+        </main>
     );
 }
 
