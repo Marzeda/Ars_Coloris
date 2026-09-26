@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import ImageModal from "../components/ImageModal";
+import API_URL from "../config/api";
 
-const API_URL = "http://localhost:5000";
 const LOGO_IMAGE = `${API_URL}/uploads/logo/ars-coloris-logo.jpg`;
 
 function ProductDetails() {

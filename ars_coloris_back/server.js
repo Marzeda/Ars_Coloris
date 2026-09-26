@@ -21,6 +21,8 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const allowedOrigins = [
     "http://localhost:3000",
     "https://ars-coloris.vercel.app"

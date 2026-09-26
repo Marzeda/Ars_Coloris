@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import ProductForm from "../components/ProductForm";
 import ConfirmModal from "../components/ConfirmModal";
-
-const API_URL =
-    process.env.REACT_APP_API_URL || "http://localhost:5000";
+import API_URL from "../config/api";
 
 function Admin() {
     const navigate = useNavigate();

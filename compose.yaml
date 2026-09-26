@@ -1,0 +1,39 @@
+services:
+
+  backend:
+    build:
+      context: ./ars_coloris_back
+    container_name: ars-coloris-back
+    restart: unless-stopped
+
+    env_file:
+      - ./ars_coloris_back/.env
+
+    ports:
+      - "5000:5000"
+
+    networks:
+      - ars-network
+
+
+  frontend:
+    build:
+      context: ./ars_coloris_front
+
+    container_name: ars-coloris-front
+
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - backend
+
+    networks:
+      - ars-network
+
+
+networks:
+  ars-network:
+    driver: bridge
