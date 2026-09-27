@@ -1,76 +1,157 @@
-import {
-    FaStore,
-    FaHome,
-    FaPalette
-} from "react-icons/fa";
-
 function Cooperation() {
     return (
         <div className="page cooperation-page">
-            <h1>Współpraca</h1>
+            <header className="cooperation-header">
+                <h1>Współpraca</h1>
 
-            <p className="cooperation-intro">
-                Ars Coloris chętnie podejmuje współpracę ze sklepami,
-                butikami, galeriami sztuki oraz projektantami wnętrz.
-                Oferujemy unikalne, ręcznie tworzone mozaiki, które
-                wyróżniają się wysoką jakością wykonania i niepowtarzalnym charakterem.
-            </p>
+                <h2 className="cooperation-subtitle">
+                    Twórzmy razem
+                </h2>
+
+                <div className="cooperation-intro">
+                    <p>
+                        Ars Coloris to autorska pracownia,
+                        dlatego każda współpraca zaczyna się
+                        od rozmowy. Nie pracuję według gotowego
+                        katalogu wzorów — projekt powstaje dla
+                        konkretnej osoby, wnętrza i miejsca.
+                    </p>
+
+                    <p>
+                        Tworzę mozaiki, witraże oraz przedmioty
+                        użytkowe i dekoracyjne ze szkła,
+                        ceramiki i innych starannie dobranych
+                        materiałów. Mogę zrealizować zarówno
+                        pojedynczy przedmiot do domu, jak
+                        i większy projekt będący częścią
+                        aranżacji wnętrza.
+                    </p>
+                </div>
+            </header>
 
             <div className="cooperation-benefits">
+                <article className="benefit-card">
+                    <h3>
+                        Stoliki mozaikowe Ars Coloris
+                    </h3>
 
-                <div className="benefit-card">
-					
-					<div className="benefit-icon">
-    <FaStore />
-</div>
-                    <h3>Dla sklepów i butików</h3>
                     <p>
-                        Oryginalne produkty, które wyróżnią ofertę
-                        i przyciągną klientów poszukujących wyjątkowego rękodzieła.
+                        Jednym z głównych elementów mojej
+                        oferty są ręcznie wykonywane stoliki
+                        mozaikowe. Każdy blat układany ręcznie
+                        z setek szklanych i ceramicznych
+                        elementów, dlatego każdy egzemplarz
+                        ma własny układ, kolorystykę
+                        i charakter.
                     </p>
-                </div>
 
-                <div className="benefit-card">
-				
-				<div className="benefit-icon">
-    <FaHome />
-</div>
-                    <h3> Dla projektantów wnętrz</h3>
                     <p>
-                        Możliwość realizacji indywidualnych projektów
-                        dopasowanych do konkretnej przestrzeni i stylu wnętrza.
+                        Stoliki mogą być pojedynczym,
+                        wyrazistym akcentem we wnętrzu albo
+                        tworzyć zestawy i niewielkie kolekcje.
+                        Sprawdzą się zarówno w domach, jak
+                        i w butikach, hotelach, apartamentach,
+                        restauracjach, kawiarniach czy
+                        salonach.
                     </p>
-                </div>
+                </article>
 
-                <div className="benefit-card">
-				
-				<div className="benefit-icon">
-    <FaPalette />
-</div>
-                    <h3> Zamówienia indywidualne</h3>
+                <article className="benefit-card">
+                    <h3>
+                        Dla klientów indywidualnych
+                    </h3>
+
                     <p>
-                        Tworzymy mozaiki na specjalne zamówienie,
-                        uwzględniając preferencje klienta i charakter projektu.
+                        Jeśli szukasz pracy stworzonej
+                        specjalnie dla Ciebie, wspólnie
+                        ustalimy jej charakter, kolorystykę,
+                        formę i przeznaczenie. Może to być
+                        mozaika ścienna, witraż, stolik, taca,
+                        dekoracja lub zupełnie indywidualny
+                        projekt inspirowany Twoim wnętrzem,
+                        pomysłem albo historią.
                     </p>
-                </div>
+                </article>
 
+                <article className="benefit-card">
+                    <h3>
+                        Dla architektów i projektantów
+                    </h3>
+
+                    <p>
+                        Chętnie współpracuję przy projektach,
+                        w których mozaika lub szkło mają stać
+                        się integralną częścią wnętrza,
+                        a nie jedynie jego dodatkiem. Projekt
+                        może powstawać od początku
+                        w odniesieniu do kolorystyki,
+                        materiałów, światła i charakteru
+                        przestrzeni.
+                    </p>
+                </article>
+
+                <article className="benefit-card">
+                    <h3>
+                        Dla hoteli, restauracji i innych
+                        przestrzeni
+                    </h3>
+
+                    <p>
+                        Tworzę również realizacje dla miejsc,
+                        które chcą mieć własny, rozpoznawalny
+                        detal — wykonany ręcznie
+                        i zaprojektowany specjalnie dla
+                        konkretnej przestrzeni.
+                    </p>
+
+                    <p>
+                        Jestem także otwarta na współpracę
+                        z galeriami, fotografami, mediami
+                        i twórcami zajmującymi się sztuką,
+                        wnętrzami, designem i współczesnym
+                        rzemiosłem.
+                    </p>
+                </article>
             </div>
 
-            <div className="cooperation-contact">
-                <h2>Zainteresowany współpracą?</h2>
+            <p className="cooperation-additional">
+                Jestem również otwarta na współpracę
+                z fotografami, magazynami wnętrzarskimi,
+                galeriami sztuki oraz mediami promującymi
+                rękodzieło, sztukę i design.
+            </p>
+
+            <section className="cooperation-contact">
+                <h2>Dlaczego Ars Coloris?</h2>
 
                 <p>
-                    Zapraszamy do kontaktu w celu omówienia szczegółów
-                    oraz przygotowania indywidualnej oferty.
+                    Autorski projekt. Ręczne wykonanie.
+                    Dobre materiały. Uważność na detal.
+                    I żadnych dwóch identycznych prac.
+                </p>
+
+                <p>
+                    Nie tworzę seryjnie. Każda realizacja
+                    powstaje tessera po tesserze, z myślą
+                    o miejscu i osobie, dla których jest
+                    przeznaczona.
+                </p>
+
+                <p>
+                    Nie musisz przychodzić z gotowym
+                    projektem. Wystarczy pomysł, potrzeba
+                    albo przestrzeń, dla której chcesz
+                    stworzyć coś szczególnego. Resztę możemy
+                    wypracować razem.
                 </p>
 
                 <a
                     href="mailto:kontakt@arscoloris.pl"
                     className="hero-button"
                 >
-                    Skontaktuj się
+                    Porozmawiajmy o Twoim pomyśle
                 </a>
-            </div>
+            </section>
         </div>
     );
 }

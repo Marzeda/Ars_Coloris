@@ -11,27 +11,29 @@ function Home() {
                     backgroundImage: `linear-gradient(
                         rgba(0, 0, 0, 0.55),
                         rgba(0, 0, 0, 0.55)
-                    ), url(${heroImage})`
+                    ), url(${heroImage})`,
                 }}
             >
                 <div className="hero-content">
-                    <h1>Ręcznie tworzone mozaiki</h1>
+                    <h1>
+                        Autorska pracownia mozaiki i witrażu
+                    </h1>
 
                     <h2>
-                        Autorskie prace Agnieszki Szelech
+                        Ars Coloris Agnieszka Szelech
                     </h2>
 
                     <p>
-                        Unikalne mozaiki tworzone z pasją,
-                        dbałością o szczegóły i miłością do
-                        piękna.
+                        Sztuka koloru. Harmonia detalu.
+                        Wielkie rzeczy powstają z małych
+                        cząsteczek.
                     </p>
 
                     <Link
                         to="/gallery"
                         className="hero-button"
                     >
-                        Zobacz galerię
+                        Zobacz mozaiki
                     </Link>
                 </div>
             </section>
@@ -40,56 +42,48 @@ function Home() {
                 className="home-section"
                 aria-labelledby="ars-coloris-features"
             >
-                <h2 id="ars-coloris-features">
-                    Dlaczego Ars Coloris?
-                </h2>
+                <div className="home-section-intro">
+                    <h2 id="ars-coloris-features">
+                        Ars Coloris znaczy „sztuka koloru”.
+                    </h2>
+
+                    <p>
+                        Dla mnie kolor nie jest dodatkiem.
+                        Jest początkiem. Tessera po tesserze.
+                    </p>
+                </div>
 
                 <div className="features">
                     <article className="feature-card">
-                        <div
-                            className="feature-icon"
-                            aria-hidden="true"
-                        >
-                            ♡
-                        </div>
-
-                        <h3>Ręczne wykonanie</h3>
-
                         <p>
-                            Każda mozaika jest tworzona ręcznie
-                            z najwyższą starannością.
+                            Ars Coloris to autorska pracownia
+                            mozaiki, w której szkło, ceramika
+                            i kolor układają się w przedmioty
+                            tworzone powoli, ręcznie i w
+                            pojedynczych egzemplarzach.
                         </p>
                     </article>
 
                     <article className="feature-card">
-                        <div
-                            className="feature-icon"
-                            aria-hidden="true"
-                        >
-                            ✦
-                        </div>
-
-                        <h3>Unikalność</h3>
-
                         <p>
-                            Każda praca jest jedyna w swoim
-                            rodzaju i ma własny charakter.
+                            Każda tessera jest wybierana, cięta
+                            i układana osobno. Nie powstają tu
+                            idealne kopie ani seryjne wzory.
+                            Są za to rytm, światło, faktura
+                            i drobne niedoskonałości ręcznej
+                            pracy, dzięki którym każdy
+                            przedmiot ma własny charakter.
                         </p>
                     </article>
 
                     <article className="feature-card">
-                        <div
-                            className="feature-icon"
-                            aria-hidden="true"
-                        >
-                            ✧
-                        </div>
-
-                        <h3>Idealne na prezent</h3>
-
                         <p>
-                            Mozaiki Ars Coloris to wyjątkowy
-                            prezent, który pozostaje na lata.
+                            Tworzę mozaiki użytkowe
+                            i dekoracyjne — misy, tace,
+                            szkatułki, stoliki i obiekty,
+                            które mają nie tylko zdobić
+                            wnętrze, ale po prostu dobrze się
+                            w nim czuć.
                         </p>
                     </article>
                 </div>

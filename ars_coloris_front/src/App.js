@@ -10,17 +10,16 @@ import Gallery from "./pages/Gallery";
 import Process from "./pages/Process";
 import Projects from "./pages/Projects";
 import Cooperation from "./pages/Cooperation";
+import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Artist from "./pages/Artist";
-
 import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-
-import ForgotPassword from "./pages/ForgotPassword";
 
 import "./App.css";
 
@@ -37,11 +36,15 @@ function App() {
                 <Route path="/process" element={<Process />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/cooperation" element={<Cooperation />} />
+                <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
 
                 <Route path="/agnieszka" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                    path="/forgot-password"
+                    element={<ForgotPassword />}
+                />
 
                 <Route
                     path="/admin"

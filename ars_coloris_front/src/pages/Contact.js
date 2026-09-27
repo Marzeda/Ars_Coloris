@@ -1,11 +1,38 @@
 function Contact() {
     return (
-        <div className="page">
+        <div className="page contact-page">
             <h1>Kontakt</h1>
-            <p>Masz pytanie o mozaikę lub zamówienie indywidualne?</p>
-			<p>Kontakt telefoniczny: +48 000 000 000 </p>
-            <p>Napisz do nas: kontakt@arscoloris.pl</p>
-			<p>Nasz rachunek bankowy: 12 1233 3212 1231 1231 1231 1231</p>
+
+            <div className="contact-intro">
+                <h2>Wpadło Ci coś w oko?</h2>
+
+                <p>
+                    Jeśli któraś z prac Ars Coloris ma
+                    zamieszkać właśnie u Ciebie — napisz
+                    do mnie.
+                </p>
+
+                <p>
+                    Odpowiem na pytania, ustalimy szczegóły
+                    zakupu, płatności i dostawy.
+                </p>
+            </div>
+
+            <div className="contact-details">
+                <p>
+                    <strong>Kontakt telefoniczny:</strong>{" "}
+                    <a href="tel:+48668761178">
+                        +48 668 761 178
+                    </a>
+                </p>
+
+                <p>
+                    <strong>Adres e-mail:</strong>{" "}
+                    <a href="mailto:kontakt@arscoloris.pl">
+                        kontakt@arscoloris.pl
+                    </a>
+                </p>
+            </div>
         </div>
     );
 }
