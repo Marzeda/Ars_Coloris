@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Cooperation() {
     return (
         <div className="page cooperation-page">
@@ -145,12 +147,12 @@ function Cooperation() {
                     wypracować razem.
                 </p>
 
-                <a
-                    href="mailto:kontakt@arscoloris.pl"
+                <Link
+                    to="/contact"
                     className="hero-button"
                 >
                     Porozmawiajmy o Twoim pomyśle
-                </a>
+                </Link>
             </section>
         </div>
     );

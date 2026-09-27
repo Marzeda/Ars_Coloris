@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ScrollToTop from "./components/ScrollToTop";
+import PolishTypography from "./components/PolishTypography";
 
 import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
@@ -27,6 +28,7 @@ function App() {
     return (
         <BrowserRouter>
             <ScrollToTop />
+            <PolishTypography />
 
             <Navbar />
 
@@ -41,6 +43,7 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetails />} />
 
                 <Route path="/agnieszka" element={<Login />} />
+
                 <Route
                     path="/forgot-password"
                     element={<ForgotPassword />}
