@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import API_URL from "../config/api";
+import PRODUCT_CATEGORIES from "../config/productCategories";
 function ProductForm({
                          productToEdit,
                          onProductAdded,
@@ -344,17 +346,14 @@ function ProductForm({
                 value={formData.category}
                 onChange={handleChange}
             >
-                <option>
-                    Mozaiki ścienne
-                </option>
-
-                <option>
-                    Stoliki mozaikowe
-                </option>
-
-                <option>
-                    Mozaiki ogrodowe
-                </option>
+                {PRODUCT_CATEGORIES.map((category) => (
+                    <option
+                        key={category}
+                        value={category}
+                    >
+                        {category}
+                    </option>
+                ))}
             </select>
 
             <input

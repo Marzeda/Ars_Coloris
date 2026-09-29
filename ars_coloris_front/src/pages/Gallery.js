@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import API_URL from "../config/api";
 import galleryHeroImage from "../assets/tlo_gallery.jpg";
 
+import PRODUCT_CATEGORIES from "../config/productCategories";
+
 function Gallery() {
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] =
@@ -27,13 +29,7 @@ function Gallery() {
 
     const categories = [
         "Wszystkie",
-        "Stoliki",
-        "Świeczniki",
-        "Pudełka",
-        "Koszyki",
-        "Patery",
-        "Dekoracje",
-        "Pozostałe prace",
+        ...PRODUCT_CATEGORIES,
     ];
 
     const getImageUrl = (imagePath) => {
