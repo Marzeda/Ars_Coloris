@@ -6,6 +6,13 @@ import API_URL from "../config/api";
 
 const LOGO_IMAGE = `${API_URL}/uploads/logo/ars-coloris-logo.jpg`;
 
+const preventPolishOrphans = (text = "") => {
+    return text.replace(
+        /(^|[\s([{„"'])((?:a|i|o|u|w|z))\s+/gi,
+        "$1$2\u00A0"
+    );
+};
+
 function ProductDetails() {
     const { id } = useParams();
 
@@ -136,7 +143,7 @@ function ProductDetails() {
                     Mozaika autorska
                 </p>
 
-                <p>{product.description}</p>
+                <p>{preventPolishOrphans(product.description)}</p>
 
                 <h2>{product.price} zł</h2>
             </div>

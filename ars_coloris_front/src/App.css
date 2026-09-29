@@ -2365,3 +2365,65 @@ body {
 .hero-content h2 {
     text-transform: none;
 }
+
+/* =========================================
+   GALLERY HERO
+   ========================================= */
+
+.gallery-hero {
+    min-height: 52vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    text-align: center;
+    padding: 100px 20px 80px;
+}
+
+.gallery-hero-content {
+    max-width: 850px;
+    color: #ffffff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+}
+
+.gallery-hero-content h1 {
+    margin: 0 0 18px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+}
+
+.gallery-hero-content p {
+    margin: 0 auto;
+    max-width: 650px;
+    font-size: clamp(17px, 2vw, 21px);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+}
+
+.gallery-page {
+    position: relative;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .gallery-hero {
+        min-height: 42vh;
+        padding: 90px 20px 65px;
+    }
+
+    .gallery-hero-content h1 {
+        font-size: clamp(38px, 11vw, 54px);
+    }
+
+    .gallery-hero-content p {
+        font-size: 16px;
+    }
+}
