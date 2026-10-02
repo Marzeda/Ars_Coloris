@@ -25,7 +25,9 @@ app.set("trust proxy", 1);
 
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://ars-coloris.vercel.app"
+    "https://ars-coloris.vercel.app",
+    "https://www.arscoloris.art",
+    "https://arscoloris.art"
 ];
 
 app.use(
