@@ -100,7 +100,7 @@ function Navbar() {
                             onClick={closeMenu}
                             className={getLinkClassName}
                         >
-                            O artystce
+                            O mnie
                         </NavLink>
                     </li>
 

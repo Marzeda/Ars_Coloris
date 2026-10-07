@@ -18,7 +18,7 @@ function About() {
                 <div className="about-content">
                     <div className="about-heading">
                         <span className="about-eyebrow">
-                            Ars Coloris · O artystce
+                            Ars Coloris · O mnie
                         </span>
 
                         <h1>Agnieszka Szelech</h1>
