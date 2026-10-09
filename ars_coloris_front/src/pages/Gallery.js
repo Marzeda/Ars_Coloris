@@ -15,17 +15,55 @@ function Gallery() {
     const [searchTerm, setSearchTerm] =
         useState("");
 
+
+
     useEffect(() => {
-        fetch(`${API_URL}/api/products`)
-            .then((res) => res.json())
-            .then((data) => setProducts(data))
-            .catch((err) =>
-                console.error(
-                    "Błąd pobierania produktów:",
-                    err
-                )
-            );
+        const controller = new AbortController();
+
+        const isProduction =
+            process.env.NODE_ENV === "production";
+
+        const productsUrl = isProduction
+            ? "/api/products"
+            : `${API_URL}/api/products`;
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(productsUrl, {
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+                }
+
+                const data = await response.json();
+
+                if (!Array.isArray(data)) {
+                    throw new Error(
+                        "Nieprawidłowy format listy produktów"
+                    );
+                }
+
+                setProducts(data);
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error(
+                        "Błąd pobierania produktów:",
+                        error
+                    );
+                }
+            }
+        }
+
+        loadProducts();
+
+        return () => controller.abort();
     }, []);
+
+
 
     const categories = [
         "Wszystkie",
