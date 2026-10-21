@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -15,8 +16,7 @@ function Gallery() {
     const [searchTerm, setSearchTerm] =
         useState("");
 
-
-
+    // Pobieranie produktów
     useEffect(() => {
         const controller = new AbortController();
 
@@ -63,13 +63,12 @@ function Gallery() {
         return () => controller.abort();
     }, []);
 
-
-
     const categories = [
         "Wszystkie",
         ...PRODUCT_CATEGORIES,
     ];
 
+    // Oryginalny adres zdjęcia
     const getImageUrl = (imagePath) => {
         if (!imagePath) {
             return "";
@@ -80,6 +79,45 @@ function Gallery() {
         }
 
         return `${API_URL}${imagePath}`;
+    };
+
+    // Zoptymalizowana miniatura Cloudinary
+    const getThumbnailUrl = (imagePath) => {
+        const originalUrl = getImageUrl(imagePath);
+
+        if (!originalUrl) {
+            return "";
+        }
+
+        try {
+            const url = new URL(originalUrl);
+
+            // Optymalizujemy tylko zdjęcia Cloudinary
+            if (
+                url.hostname !== "res.cloudinary.com" ||
+                !url.pathname.includes("/image/upload/")
+            ) {
+                return originalUrl;
+            }
+
+            // f_auto - format dopasowany do przeglądarki
+            // q_auto - automatyczna jakość
+            // w_800 - maksymalna szerokość 800 px
+            // c_limit - bez powiększania małych zdjęć
+            url.pathname = url.pathname.replace(
+                "/image/upload/",
+                "/image/upload/f_auto,q_auto,w_800,c_limit/"
+            );
+
+            return url.toString();
+        } catch (error) {
+            console.error(
+                "Błąd optymalizacji adresu zdjęcia:",
+                error
+            );
+
+            return originalUrl;
+        }
     };
 
     const getCategoryCount = (category) => {
@@ -110,25 +148,22 @@ function Gallery() {
         return "prac";
     };
 
+    // Filtrowanie produktów
     const filteredProducts = products.filter(
         (product) => {
             const categoryMatch =
                 selectedCategory === "Wszystkie" ||
-                product.category ===
-                selectedCategory;
+                product.category === selectedCategory;
 
             const searchMatch = product.name
                 .toLowerCase()
-                .includes(
-                    searchTerm.toLowerCase()
-                );
+                .includes(searchTerm.toLowerCase());
 
-            return (
-                categoryMatch && searchMatch
-            );
+            return categoryMatch && searchMatch;
         }
     );
 
+    // Sortowanie produktów
     const sortedProducts = [
         ...filteredProducts,
     ].sort((a, b) => {
@@ -180,21 +215,16 @@ function Gallery() {
                             <button
                                 key={category}
                                 className={
-                                    selectedCategory ===
-                                    category
+                                    selectedCategory === category
                                         ? "active-category"
                                         : ""
                                 }
                                 onClick={() =>
-                                    setSelectedCategory(
-                                        category
-                                    )
+                                    setSelectedCategory(category)
                                 }
                             >
                                 {category} (
-                                {getCategoryCount(
-                                    category
-                                )}
+                                {getCategoryCount(category)}
                                 )
                             </button>
                         )
@@ -207,9 +237,7 @@ function Gallery() {
                         placeholder="Szukaj mozaiki..."
                         value={searchTerm}
                         onChange={(e) =>
-                            setSearchTerm(
-                                e.target.value
-                            )
+                            setSearchTerm(e.target.value)
                         }
                     />
                 </div>
@@ -220,9 +248,7 @@ function Gallery() {
                     <select
                         value={sortOption}
                         onChange={(event) =>
-                            setSortOption(
-                                event.target.value
-                            )
+                            setSortOption(event.target.value)
                         }
                     >
                         <option value="default">
@@ -258,21 +284,20 @@ function Gallery() {
                 </p>
 
                 <div className="products">
-                    {sortedProducts.length ===
-                        0 && (
-                            <div className="empty-category">
-                                <h2>
-                                    Prace w przygotowaniu
-                                </h2>
+                    {sortedProducts.length === 0 && (
+                        <div className="empty-category">
+                            <h2>
+                                Prace w przygotowaniu
+                            </h2>
 
-                                <p>
-                                    Aktualnie nie ma
-                                    jeszcze prac w tej
-                                    kategorii. Zapraszamy
-                                    ponownie wkrótce.
-                                </p>
-                            </div>
-                        )}
+                            <p>
+                                Aktualnie nie ma
+                                jeszcze prac w tej
+                                kategorii. Zapraszamy
+                                ponownie wkrótce.
+                            </p>
+                        </div>
+                    )}
 
                     {sortedProducts.map(
                         (product) => (
@@ -290,17 +315,14 @@ function Gallery() {
                                     to={`/product/${product.id}`}
                                 >
                                     {product.images &&
-                                    product.images
-                                        .length >
-                                    0 ? (
+                                    product.images.length > 0 ? (
                                         <img
-                                            src={getImageUrl(
-                                                product
-                                                    .images[0]
+                                            src={getThumbnailUrl(
+                                                product.images[0]
                                             )}
-                                            alt={
-                                                product.name
-                                            }
+                                            alt={product.name}
+                                            loading="lazy"
+                                            decoding="async"
                                         />
                                     ) : (
                                         <div className="product-no-image">
@@ -314,9 +336,7 @@ function Gallery() {
                                 </h3>
 
                                 <p className="product-category">
-                                    {
-                                        product.category
-                                    }
+                                    {product.category}
                                 </p>
 
                                 <p className="product-price">
