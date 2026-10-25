@@ -28,8 +28,8 @@ function Contact() {
 
                 <p>
                     <strong>Adres e-mail:</strong>{" "}
-                    <a href="mailto:kontakt@arscoloris.pl">
-                        kontakt@arscoloris.pl
+                    <a href="mailto:agnieszka_szelech@wp.pl">
+                        agnieszka_szelech@wp.pl
                     </a>
                 </p>
             </div>
