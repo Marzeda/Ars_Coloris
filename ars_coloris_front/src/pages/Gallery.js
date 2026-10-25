@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 import API_URL from "../config/api";
 import galleryHeroImage from "../assets/tlo_gallery.jpg";
-
 import PRODUCT_CATEGORIES from "../config/productCategories";
 
 function Gallery() {
@@ -16,7 +15,10 @@ function Gallery() {
     const [searchTerm, setSearchTerm] =
         useState("");
 
-    // Pobieranie produktów
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+
+    // Pobieranie produktów z dotychczasowego API
     useEffect(() => {
         const controller = new AbortController();
 
@@ -29,8 +31,11 @@ function Gallery() {
 
         async function loadProducts() {
             try {
+                setLoading(true);
+                setLoadError("");
+
                 const response = await fetch(productsUrl, {
-                    signal: controller.signal,
+                    signal: controller.signal
                 });
 
                 if (!response.ok) {
@@ -54,6 +59,15 @@ function Gallery() {
                         "Błąd pobierania produktów:",
                         error
                     );
+
+                    setLoadError(
+                        "Nie udało się pobrać prac. " +
+                        "Spróbuj odświeżyć stronę."
+                    );
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
                 }
             }
         }
@@ -65,8 +79,17 @@ function Gallery() {
 
     const categories = [
         "Wszystkie",
-        ...PRODUCT_CATEGORIES,
+        ...PRODUCT_CATEGORIES
     ];
+
+    // W Galerii pokazujemy wyłącznie prace
+    // dostępne i zarezerwowane.
+    // Brak statusu oznacza starszy produkt
+    // traktowany jako dostępny.
+    const galleryProducts = products.filter(
+        (product) =>
+            (product.saleStatus || "available") !== "sold"
+    );
 
     // Oryginalny adres zdjęcia
     const getImageUrl = (imagePath) => {
@@ -92,7 +115,6 @@ function Gallery() {
         try {
             const url = new URL(originalUrl);
 
-            // Optymalizujemy tylko zdjęcia Cloudinary
             if (
                 url.hostname !== "res.cloudinary.com" ||
                 !url.pathname.includes("/image/upload/")
@@ -100,10 +122,6 @@ function Gallery() {
                 return originalUrl;
             }
 
-            // f_auto - format dopasowany do przeglądarki
-            // q_auto - automatyczna jakość
-            // w_800 - maksymalna szerokość 800 px
-            // c_limit - bez powiększania małych zdjęć
             url.pathname = url.pathname.replace(
                 "/image/upload/",
                 "/image/upload/f_auto,q_auto,w_800,c_limit/"
@@ -120,12 +138,14 @@ function Gallery() {
         }
     };
 
+    // Liczniki uwzględniają tylko Galerię,
+    // bez produktów sprzedanych.
     const getCategoryCount = (category) => {
         if (category === "Wszystkie") {
-            return products.length;
+            return galleryProducts.length;
         }
 
-        return products.filter(
+        return galleryProducts.filter(
             (product) =>
                 product.category === category
         ).length;
@@ -149,13 +169,13 @@ function Gallery() {
     };
 
     // Filtrowanie produktów
-    const filteredProducts = products.filter(
+    const filteredProducts = galleryProducts.filter(
         (product) => {
             const categoryMatch =
                 selectedCategory === "Wszystkie" ||
                 product.category === selectedCategory;
 
-            const searchMatch = product.name
+            const searchMatch = (product.name || "")
                 .toLowerCase()
                 .includes(searchTerm.toLowerCase());
 
@@ -165,7 +185,7 @@ function Gallery() {
 
     // Sortowanie produktów
     const sortedProducts = [
-        ...filteredProducts,
+        ...filteredProducts
     ].sort((a, b) => {
         if (sortOption === "name-asc") {
             return a.name.localeCompare(b.name);
@@ -194,7 +214,7 @@ function Gallery() {
                     backgroundImage: `linear-gradient(
                         rgba(0, 0, 0, 0.28),
                         rgba(0, 0, 0, 0.28)
-                    ), url(${galleryHeroImage})`,
+                    ), url(${galleryHeroImage})`
                 }}
             >
                 <div className="gallery-hero-content">
@@ -210,25 +230,23 @@ function Gallery() {
 
             <section className="page gallery-page">
                 <div className="category-filters">
-                    {categories.map(
-                        (category) => (
-                            <button
-                                key={category}
-                                className={
-                                    selectedCategory === category
-                                        ? "active-category"
-                                        : ""
-                                }
-                                onClick={() =>
-                                    setSelectedCategory(category)
-                                }
-                            >
-                                {category} (
-                                {getCategoryCount(category)}
-                                )
-                            </button>
-                        )
-                    )}
+                    {categories.map((category) => (
+                        <button
+                            key={category}
+                            className={
+                                selectedCategory === category
+                                    ? "active-category"
+                                    : ""
+                            }
+                            onClick={() =>
+                                setSelectedCategory(category)
+                            }
+                        >
+                            {category} (
+                            {getCategoryCount(category)}
+                            )
+                        </button>
+                    ))}
                 </div>
 
                 <div className="search-box">
@@ -236,16 +254,19 @@ function Gallery() {
                         type="text"
                         placeholder="Szukaj mozaiki..."
                         value={searchTerm}
-                        onChange={(e) =>
-                            setSearchTerm(e.target.value)
+                        onChange={(event) =>
+                            setSearchTerm(event.target.value)
                         }
                     />
                 </div>
 
                 <div className="sort-box">
-                    <label>Sortuj: </label>
+                    <label htmlFor="gallery-sort">
+                        Sortuj:{" "}
+                    </label>
 
                     <select
+                        id="gallery-sort"
                         value={sortOption}
                         onChange={(event) =>
                             setSortOption(event.target.value)
@@ -273,87 +294,115 @@ function Gallery() {
                     </select>
                 </div>
 
-                <p className="products-count">
-                    {sortedProducts.length === 0
-                        ? "Nie znaleziono prac"
-                        : `Znaleziono ${
-                            sortedProducts.length
-                        } ${getWorksText(
-                            sortedProducts.length
-                        )}`}
-                </p>
+                {loading ? (
+                    <p className="products-count">
+                        Ładowanie prac...
+                    </p>
+                ) : loadError ? (
+                    <p className="products-count" role="alert">
+                        {loadError}
+                    </p>
+                ) : (
+                    <>
+                        <p className="products-count">
+                            {sortedProducts.length === 0
+                                ? "Nie znaleziono prac"
+                                : `Znaleziono ${
+                                    sortedProducts.length
+                                } ${getWorksText(
+                                    sortedProducts.length
+                                )}`}
+                        </p>
 
-                <div className="products">
-                    {sortedProducts.length === 0 && (
-                        <div className="empty-category">
-                            <h2>
-                                Prace w przygotowaniu
-                            </h2>
+                        <div className="products">
+                            {sortedProducts.length === 0 && (
+                                <div className="empty-category">
+                                    <h2>
+                                        Prace w przygotowaniu
+                                    </h2>
 
-                            <p>
-                                Aktualnie nie ma
-                                jeszcze prac w tej
-                                kategorii. Zapraszamy
-                                ponownie wkrótce.
-                            </p>
-                        </div>
-                    )}
+                                    <p>
+                                        Aktualnie nie ma
+                                        jeszcze prac w tej
+                                        kategorii. Zapraszamy
+                                        ponownie wkrótce.
+                                    </p>
+                                </div>
+                            )}
 
-                    {sortedProducts.map(
-                        (product) => (
-                            <div
-                                className="product-card"
-                                key={product.id}
-                            >
-                                {product.isNew && (
-                                    <div className="product-badge">
-                                        NOWOŚĆ
-                                    </div>
-                                )}
+                            {sortedProducts.map((product) => {
+                                const isReserved =
+                                    product.saleStatus ===
+                                    "reserved";
 
-                                <Link
-                                    to={`/product/${product.id}`}
-                                >
-                                    {product.images &&
-                                    product.images.length > 0 ? (
-                                        <img
-                                            src={getThumbnailUrl(
-                                                product.images[0]
+                                return (
+                                    <div
+                                        className="product-card"
+                                        key={product.id}
+                                    >
+                                        {isReserved ? (
+                                            <div className="product-badge">
+                                                ZAREZERWOWANA
+                                            </div>
+                                        ) : (
+                                            product.isNew && (
+                                                <div className="product-badge">
+                                                    NOWOŚĆ
+                                                </div>
+                                            )
+                                        )}
+
+                                        <Link
+                                            to={`/product/${product.id}`}
+                                        >
+                                            {product.images &&
+                                            product.images.length > 0 ? (
+                                                <img
+                                                    src={getThumbnailUrl(
+                                                        product.images[0]
+                                                    )}
+                                                    alt={product.name}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            ) : (
+                                                <div className="product-no-image">
+                                                    Brak zdjęcia
+                                                </div>
                                             )}
-                                            alt={product.name}
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
-                                    ) : (
-                                        <div className="product-no-image">
-                                            Brak zdjęcia
-                                        </div>
-                                    )}
-                                </Link>
+                                        </Link>
 
-                                <h3>
-                                    {product.name}
-                                </h3>
+                                        <h3>
+                                            {product.name}
+                                        </h3>
 
-                                <p className="product-category">
-                                    {product.category}
-                                </p>
+                                        <p className="product-category">
+                                            {product.category}
+                                        </p>
 
-                                <p className="product-price">
-                                    {product.price} zł
-                                </p>
+                                        <p className="product-price">
+                                            {product.price} zł
+                                        </p>
 
-                                <Link
-                                    to={`/product/${product.id}`}
-                                >
-                                    <button>
-                                        Zobacz pracę
-                                    </button>
-                                </Link>
-                            </div>
-                        )
-                    )}
-                </div>
+                                        {isReserved && (
+                                            <p className="product-availability">
+                                                Zarezerwowana
+                                            </p>
+                                        )}
+
+                                        <Link
+                                            to={`/product/${product.id}`}
+                                        >
+                                            <button type="button">
+                                                Zobacz pracę
+                                            </button>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
             </section>
         </main>
     );

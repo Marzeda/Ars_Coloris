@@ -1,7 +1,9 @@
+
 const express = require("express");
 
 const {
     getProducts,
+    getProductsForManagement,
     getProductById,
     createProduct,
     updateProduct,
@@ -27,16 +29,28 @@ const upload = require(
 
 const router = express.Router();
 
+// PUBLICZNA LISTA PRODUKTÓW
 router.get(
     "/",
     getProducts
 );
 
+// PEŁNA LISTA DLA ARTYSTY I ADMINISTRATORA
+// Ta trasa musi znajdować się przed "/:id".
+router.get(
+    "/manage",
+    verifyToken,
+    verifyPanelUser,
+    getProductsForManagement
+);
+
+// PUBLICZNE SZCZEGÓŁY PRODUKTU
 router.get(
     "/:id",
     getProductById
 );
 
+// DODAWANIE PRODUKTU
 router.post(
     "/",
     verifyToken,
@@ -44,6 +58,7 @@ router.post(
     createProduct
 );
 
+// EDYCJA PRODUKTU
 router.put(
     "/:id",
     verifyToken,
@@ -51,6 +66,7 @@ router.put(
     updateProduct
 );
 
+// USUWANIE PRODUKTU
 router.delete(
     "/:id",
     verifyToken,
@@ -58,6 +74,7 @@ router.delete(
     deleteProduct
 );
 
+// DODAWANIE ZDJĘĆ
 router.post(
     "/:id/images",
     verifyToken,
@@ -66,6 +83,7 @@ router.post(
     uploadImages
 );
 
+// USUWANIE ZDJĘCIA
 router.delete(
     "/:id/images",
     verifyToken,
@@ -73,6 +91,7 @@ router.delete(
     deleteImage
 );
 
+// USTAWIANIE ZDJĘCIA GŁÓWNEGO
 router.put(
     "/:id/main-image",
     verifyToken,

@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
@@ -30,6 +31,16 @@ const productSchema = new mongoose.Schema(
             type: String,
             default: "Dostępne",
             trim: true
+        },
+
+        // Status sprzedaży pracy:
+        // available - dostępna w Galerii
+        // reserved  - zarezerwowana w Galerii
+        // sold      - sprzedana, widoczna w Archiwum
+        saleStatus: {
+            type: String,
+            enum: ["available", "reserved", "sold"],
+            default: "available"
         },
 
         deliveryTime: {
@@ -69,6 +80,7 @@ const productSchema = new mongoose.Schema(
         collection: "products"
     }
 );
+
 productSchema.virtual("id").get(function () {
     return this.legacyId;
 });

@@ -1,18 +1,21 @@
+
 import { useEffect, useState } from "react";
 
 import API_URL from "../config/api";
 import PRODUCT_CATEGORIES from "../config/productCategories";
+
 function ProductForm({
-                         productToEdit,
-                         onProductAdded,
-                         onProductUpdated,
-                         onCancel
-                     }) {
+    productToEdit,
+    onProductAdded,
+    onProductUpdated,
+    onCancel
+}) {
     const [formData, setFormData] = useState({
         name: "",
         category: "Dekoracje",
         price: "",
         availability: "Dostępny",
+        saleStatus: "available",
         deliveryTime: "3-5 dni roboczych",
         description: ""
     });
@@ -30,10 +33,12 @@ function ProductForm({
                 category:
                     productToEdit.category ||
                     "Dekoracje",
-                price: productToEdit.price || "",
+                price: productToEdit.price ?? "",
                 availability:
                     productToEdit.availability ||
                     "Dostępny",
+                saleStatus:
+                    productToEdit.saleStatus || "available",
                 deliveryTime:
                     productToEdit.deliveryTime ||
                     "3-5 dni roboczych",
@@ -375,6 +380,45 @@ function ProductForm({
                 <option>Niedostępny</option>
             </select>
 
+            <label
+                htmlFor="saleStatus"
+                style={{
+                    display: "block",
+                    marginTop: "16px",
+                    marginBottom: "6px"
+                }}
+            >
+                Status sprzedaży
+            </label>
+
+            <select
+                id="saleStatus"
+                name="saleStatus"
+                value={formData.saleStatus}
+                onChange={handleChange}
+            >
+                <option value="available">
+                    Dostępna — Galeria
+                </option>
+                <option value="reserved">
+                    Zarezerwowana — Galeria
+                </option>
+                <option value="sold">
+                    Sprzedana — Archiwum
+                </option>
+            </select>
+
+            <p
+                style={{
+                    fontSize: "0.85rem",
+                    opacity: 0.75,
+                    marginTop: "6px"
+                }}
+            >
+                Sprzedana praca będzie wyświetlana
+                w Archiwum po uruchomieniu tej podstrony.
+            </p>
+
             <input
                 name="deliveryTime"
                 placeholder="Czas realizacji"
@@ -405,14 +449,11 @@ function ProductForm({
                                 ) => (
                                     <div
                                         className={`admin-image-item ${
-                                            index ===
-                                            0
+                                            index === 0
                                                 ? "main-image-item"
                                                 : ""
                                         }`}
-                                        key={
-                                            image
-                                        }
+                                        key={image}
                                     >
                                         <img
                                             src={getImageUrl(
@@ -421,30 +462,25 @@ function ProductForm({
                                             alt="Zdjęcie produktu"
                                         />
 
-                                        {index ===
-                                            0 && (
-                                                <div className="main-image-label">
-                                                    Zdjęcie
-                                                    główne
-                                                </div>
-                                            )}
+                                        {index === 0 && (
+                                            <div className="main-image-label">
+                                                Zdjęcie główne
+                                            </div>
+                                        )}
 
-                                        {index !==
-                                            0 && (
-                                                <button
-                                                    type="button"
-                                                    className="main-image-button"
-                                                    onClick={() =>
-                                                        handleSetMainImage(
-                                                            image
-                                                        )
-                                                    }
-                                                >
-                                                    Ustaw
-                                                    jako
-                                                    główne
-                                                </button>
-                                            )}
+                                        {index !== 0 && (
+                                            <button
+                                                type="button"
+                                                className="main-image-button"
+                                                onClick={() =>
+                                                    handleSetMainImage(
+                                                        image
+                                                    )
+                                                }
+                                            >
+                                                Ustaw jako główne
+                                            </button>
+                                        )}
 
                                         <button
                                             type="button"
@@ -455,8 +491,7 @@ function ProductForm({
                                                 )
                                             }
                                         >
-                                            Usuń
-                                            zdjęcie
+                                            Usuń zdjęcie
                                         </button>
                                     </div>
                                 )
@@ -475,50 +510,37 @@ function ProductForm({
                     onChange={handleFileChange}
                 />
 
-                {previewImages.length >
-                    0 && (
-                        <div className="selected-images-preview">
-                            <p>
-                                Wybrano plików:{" "}
-                                {
-                                    previewImages.length
-                                }
-                            </p>
+                {previewImages.length > 0 && (
+                    <div className="selected-images-preview">
+                        <p>
+                            Wybrano plików:{" "}
+                            {previewImages.length}
+                        </p>
 
-                            <div className="preview-images-grid">
-                                {previewImages.map(
-                                    (
-                                        image,
-                                        index
-                                    ) => (
-                                        <div
-                                            key={`${image.file.name}-${index}`}
-                                            className="preview-image-item"
-                                        >
-                                            <img
-                                                src={
-                                                    image.url
-                                                }
-                                                alt={
-                                                    image
-                                                        .file
-                                                        .name
-                                                }
-                                            />
+                        <div className="preview-images-grid">
+                            {previewImages.map(
+                                (
+                                    image,
+                                    index
+                                ) => (
+                                    <div
+                                        key={`${image.file.name}-${index}`}
+                                        className="preview-image-item"
+                                    >
+                                        <img
+                                            src={image.url}
+                                            alt={image.file.name}
+                                        />
 
-                                            <span>
-                                            {
-                                                image
-                                                    .file
-                                                    .name
-                                            }
+                                        <span>
+                                            {image.file.name}
                                         </span>
-                                        </div>
-                                    )
-                                )}
-                            </div>
+                                    </div>
+                                )
+                            )}
                         </div>
-                    )}
+                    </div>
+                )}
             </div>
 
             <div className="product-form-actions">

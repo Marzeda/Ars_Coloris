@@ -1,3 +1,4 @@
+
 const Product = require("../models/Product");
 
 const mapProductForFrontend = require(
@@ -11,6 +12,26 @@ const ServiceError = require(
 const getNextSequence = require(
     "../utils/getNextSequence"
 );
+
+const VALID_SALE_STATUSES = [
+    "available",
+    "reserved",
+    "sold"
+];
+
+const validateSaleStatus = (status) => {
+    if (
+        typeof status !== "string" ||
+        !VALID_SALE_STATUSES.includes(status)
+    ) {
+        throw new ServiceError(
+            "Nieprawidłowy status sprzedaży produktu.",
+            400
+        );
+    }
+
+    return status;
+};
 
 const getProducts = async () => {
     const products = await Product.find({
@@ -54,6 +75,7 @@ const createProduct = async (data) => {
         category,
         price,
         availability,
+        saleStatus = "available",
         deliveryTime,
         description,
         images = []
@@ -84,19 +106,27 @@ const createProduct = async (data) => {
         );
     }
 
+    const validatedSaleStatus =
+        validateSaleStatus(saleStatus);
+
     const legacyId =
         await getNextSequence("product");
 
     const product = new Product({
         legacyId,
+
         name: String(name).trim(),
+
         category: String(category).trim(),
+
         price: parsedPrice,
 
         availability:
             typeof availability === "string"
                 ? availability.trim()
                 : "Dostępny",
+
+        saleStatus: validatedSaleStatus,
 
         deliveryTime:
             typeof deliveryTime === "string"
@@ -144,6 +174,7 @@ const updateProduct = async (id, data) => {
         category,
         price,
         availability,
+        saleStatus,
         deliveryTime,
         description,
         images,
@@ -177,8 +208,7 @@ const updateProduct = async (id, data) => {
             );
         }
 
-        product.category =
-            trimmedCategory;
+        product.category = trimmedCategory;
     }
 
     if (price !== undefined) {
@@ -200,6 +230,11 @@ const updateProduct = async (id, data) => {
     if (availability !== undefined) {
         product.availability =
             String(availability).trim();
+    }
+
+    if (saleStatus !== undefined) {
+        product.saleStatus =
+            validateSaleStatus(saleStatus);
     }
 
     if (deliveryTime !== undefined) {

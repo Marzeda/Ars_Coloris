@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,26 +15,88 @@ function Admin() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
-    useEffect(() => {
-        fetch(`${API_URL}/api/products`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Nie udało się pobrać dzieł.");
-                }
-
-                return response.json();
-            })
-            .then((data) => {
-                setProducts(data);
-            })
-            .catch((error) => {
-                console.error("Błąd pobierania dzieł:", error);
-            });
-    }, []);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const getToken = () => {
         return localStorage.getItem("token");
     };
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                const token = getToken();
+
+                if (!token) {
+                    navigate("/agnieszka", {
+                        replace: true
+                    });
+                    return;
+                }
+
+                const response = await fetch(
+                    `${API_URL}/api/products/manage`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        signal: controller.signal
+                    }
+                );
+
+                if (
+                    response.status === 401 ||
+                    response.status === 403
+                ) {
+                    throw new Error(
+                        "Brak dostępu do panelu. Zaloguj się ponownie."
+                    );
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Nie udało się pobrać dzieł."
+                    );
+                }
+
+                const data = await response.json();
+
+                if (!Array.isArray(data)) {
+                    throw new Error(
+                        "Nieprawidłowa odpowiedź serwera."
+                    );
+                }
+
+                setProducts(data);
+            } catch (fetchError) {
+                if (fetchError.name === "AbortError") {
+                    return;
+                }
+
+                console.error(
+                    "Błąd pobierania dzieł:",
+                    fetchError
+                );
+
+                setError(fetchError.message);
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchProducts();
+
+        return () => {
+            controller.abort();
+        };
+    }, [navigate]);
 
     const getImageUrl = (imagePath) => {
         if (!imagePath) {
@@ -45,6 +108,20 @@ function Admin() {
         }
 
         return `${API_URL}${imagePath}`;
+    };
+
+    const getSaleStatusLabel = (saleStatus) => {
+        switch (saleStatus) {
+            case "reserved":
+                return "Zarezerwowana";
+
+            case "sold":
+                return "Znalazła swoje miejsce";
+
+            case "available":
+            default:
+                return "Dostępna";
+        }
     };
 
     const handleLogout = () => {
@@ -103,12 +180,19 @@ function Admin() {
         }
 
         try {
+            const token = getToken();
+
+            if (!token) {
+                alert("Sesja wygasła. Zaloguj się ponownie.");
+                return;
+            }
+
             const response = await fetch(
                 `${API_URL}/api/products/${productToDelete.id}`,
                 {
                     method: "DELETE",
                     headers: {
-                        Authorization: `Bearer ${getToken()}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
             );
@@ -120,7 +204,6 @@ function Admin() {
                     data.message ||
                     "Nie udało się usunąć dzieła."
                 );
-
                 return;
             }
 
@@ -132,8 +215,12 @@ function Admin() {
             );
 
             closeDeleteModal();
-        } catch (error) {
-            console.error("Błąd usuwania dzieła:", error);
+        } catch (deleteError) {
+            console.error(
+                "Błąd usuwania dzieła:",
+                deleteError
+            );
+
             alert("Nie udało się usunąć dzieła.");
         }
     };
@@ -172,68 +259,93 @@ function Admin() {
                 />
             )}
 
-            <table className="admin-table">
-                <thead>
-                <tr>
-                    <th>Zdjęcie</th>
-                    <th>ID</th>
-                    <th>Nazwa</th>
-                    <th>Kategoria</th>
-                    <th>Cena</th>
-                    <th>Akcje</th>
-                </tr>
-                </thead>
+            {loading && (
+                <p>Ładowanie dzieł...</p>
+            )}
 
-                <tbody>
-                {products.map((product) => (
-                    <tr key={product.id}>
-                        <td>
-                            {product.images &&
-                            product.images.length > 0 ? (
-                                <img
-                                    src={getImageUrl(
-                                        product.images[0]
+            {error && (
+                <p role="alert" style={{ color: "#b91c1c" }}>
+                    {error}
+                </p>
+            )}
+
+            {!loading && !error && (
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Zdjęcie</th>
+                            <th>ID</th>
+                            <th>Nazwa</th>
+                            <th>Kategoria</th>
+                            <th>Status sprzedaży</th>
+                            <th>Cena</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {products.map((product) => (
+                            <tr key={product.id}>
+                                <td>
+                                    {product.images &&
+                                    product.images.length > 0 ? (
+                                        <img
+                                            src={getImageUrl(
+                                                product.images[0]
+                                            )}
+                                            alt={product.name}
+                                            className="admin-product-thumbnail"
+                                        />
+                                    ) : (
+                                        <div className="admin-no-image">
+                                            Brak zdjęcia
+                                        </div>
                                     )}
-                                    alt={product.name}
-                                    className="admin-product-thumbnail"
-                                />
-                            ) : (
-                                <div className="admin-no-image">
-                                    Brak zdjęcia
-                                </div>
-                            )}
-                        </td>
+                                </td>
 
-                        <td>{product.id}</td>
-                        <td>{product.name}</td>
-                        <td>{product.category}</td>
-                        <td>{product.price} zł</td>
+                                <td>{product.id}</td>
+                                <td>{product.name}</td>
+                                <td>{product.category}</td>
 
-                        <td>
-                            <button
-                                className="edit-button"
-                                onClick={() =>
-                                    handleEditClick(product)
-                                }
-                            >
-                                Edytuj
-                            </button>
+                                <td>
+                                    {getSaleStatusLabel(
+                                        product.saleStatus
+                                    )}
+                                </td>
 
-                            {" "}
+                                <td>
+                                    {product.price !== undefined &&
+                                    product.price !== null
+                                        ? `${product.price} zł`
+                                        : "Brak ceny"}
+                                </td>
 
-                            <button
-                                className="delete-button"
-                                onClick={() =>
-                                    openDeleteModal(product)
-                                }
-                            >
-                                Usuń
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                                <td>
+                                    <button
+                                        className="edit-button"
+                                        onClick={() =>
+                                            handleEditClick(product)
+                                        }
+                                    >
+                                        Edytuj
+                                    </button>
+
+                                    {" "}
+
+                                    <button
+                                        className="delete-button"
+                                        onClick={() =>
+                                            openDeleteModal(product)
+                                        }
+                                    >
+                                        Usuń
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
 
             <ConfirmModal
                 isOpen={showDeleteModal}

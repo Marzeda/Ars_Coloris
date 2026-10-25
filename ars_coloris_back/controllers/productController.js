@@ -1,9 +1,9 @@
+
 const asyncHandler = require(
     "../middleware/asyncHandler"
 );
 
 const Product = require("../models/Product");
-
 
 const productService = require(
     "../services/productService"
@@ -12,7 +12,35 @@ const productService = require(
 const productImageService = require(
     "../services/productImageService"
 );
+
+// Przygotowanie produktu do publicznego API.
+// Nie zmieniamy danych zapisanych w MongoDB.
+const mapPublicProduct = (product) => {
+    const publicProduct = {
+        ...product
+    };
+
+    if (publicProduct.saleStatus === "sold") {
+        delete publicProduct.price;
+    }
+
+    return publicProduct;
+};
+
+// PUBLICZNA LISTA PRODUKTÓW
 const getProducts = asyncHandler(
+    async (req, res) => {
+        const products =
+            await productService.getProducts();
+
+        return res.json(
+            products.map(mapPublicProduct)
+        );
+    }
+);
+
+// PEŁNA LISTA DLA PANELU ARTYSTY / ADMINA
+const getProductsForManagement = asyncHandler(
     async (req, res) => {
         const products =
             await productService.getProducts();
@@ -20,6 +48,8 @@ const getProducts = asyncHandler(
         return res.json(products);
     }
 );
+
+// PUBLICZNE SZCZEGÓŁY PRODUKTU
 const getProductById = asyncHandler(
     async (req, res) => {
         const product =
@@ -27,10 +57,13 @@ const getProductById = asyncHandler(
                 Number(req.params.id)
             );
 
-        return res.json(product);
+        return res.json(
+            mapPublicProduct(product)
+        );
     }
 );
 
+// DODAWANIE PRODUKTU
 const createProduct = asyncHandler(
     async (req, res) => {
         const product =
@@ -44,6 +77,8 @@ const createProduct = asyncHandler(
         });
     }
 );
+
+// EDYCJA PRODUKTU
 const updateProduct = asyncHandler(
     async (req, res) => {
         const product =
@@ -55,6 +90,8 @@ const updateProduct = asyncHandler(
         return res.json(product);
     }
 );
+
+// USUWANIE PRODUKTU I JEGO ZDJĘĆ
 const deleteProduct = async (req, res) => {
     try {
         const productId =
@@ -113,8 +150,10 @@ const deleteProduct = async (req, res) => {
             });
     }
 };
+
 module.exports = {
     getProducts,
+    getProductsForManagement,
     getProductById,
     createProduct,
     updateProduct,

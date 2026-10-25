@@ -1,15 +1,13 @@
+
 import { Link } from "react-router-dom";
-import {
-    FaEnvelope,
-    FaPhoneAlt,
-    FaUniversity
-} from "react-icons/fa";
+import { FaEnvelope } from "react-icons/fa";
 
 function Footer() {
     return (
         <footer className="footer">
             <div className="footer-content">
 
+                {/* Ars Coloris */}
                 <div className="footer-section">
                     <h3>Ars Coloris</h3>
 
@@ -19,36 +17,97 @@ function Footer() {
                     </p>
                 </div>
 
+                {/* Nawigacja */}
                 <div className="footer-section">
                     <h3>Nawigacja</h3>
 
                     <ul>
-                        <li><Link to="/">Strona główna</Link></li>
-                        <li><Link to="/gallery">Galeria</Link></li>
-                        <li><Link to="/cooperation">Współpraca</Link></li>
-                        <li><Link to="/contact">Kontakt</Link></li>
-						<li><Link to="/process">Proces tworzenia</Link></li>
-						<li><Link to="/projects">Zrealizowane projekty</Link></li>
+                        <li>
+                            <Link to="/">
+                                Strona główna
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/gallery">
+                                Galeria
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/archive">
+                                Archiwum
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/process">
+                                Proces tworzenia
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/projects">
+                                Zrealizowane projekty
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/cooperation">
+                                Współpraca
+                            </Link>
+                        </li>
+
+                        <li>
+                            <Link to="/contact">
+                                Kontakt
+                            </Link>
+                        </li>
                     </ul>
                 </div>
 
-                
-				<div className="footer-section">
-    <h3>Kontakt</h3>
+                {/* Informacje prawne */}
+                <div className="footer-section">
+                    <h3>Informacje prawne</h3>
 
-    <p><FaEnvelope /> kontakt@arscoloris.pl</p>
+                    <ul>
+                        <li>
+                            <Link to="/privacy-policy">
+                                Polityka prywatności
+                            </Link>
+                        </li>
 
-    <p><FaPhoneAlt /> +48 000 000 000</p>
+                        <li>
+                            <Link to="/cookies">
+                                Polityka cookies
+                            </Link>
+                        </li>
 
-    <p>
-        <FaUniversity /> 12 1233 3212 1231 1231 1231 1231
-    </p>
-</div>
+                        <li>
+                            <Link to="/terms">
+                                Regulamin sprzedaży
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Kontakt */}
+                <div className="footer-section">
+                    <h3>Kontakt</h3>
+
+                    <p>
+                        <FaEnvelope />{" "}
+                        <a href="mailto:kontakt@arscoloris.pl">
+                            kontakt@arscoloris.pl
+                        </a>
+                    </p>
+                </div>
 
             </div>
 
             <div className="footer-bottom">
-                © 2026 ARS Coloris. Wszelkie prawa zastrzeżone.
+                © {new Date().getFullYear()} Ars Coloris.
+                Wszelkie prawa zastrzeżone.
             </div>
         </footer>
     );
