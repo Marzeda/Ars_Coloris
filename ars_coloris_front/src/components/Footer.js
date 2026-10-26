@@ -1,21 +1,11 @@
 
 import { Link } from "react-router-dom";
-import { FaEnvelope } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
 
 function Footer() {
     return (
         <footer className="footer">
             <div className="footer-content">
-
-                {/* Ars Coloris */}
-                <div className="footer-section">
-                    <h3>Ars Coloris</h3>
-
-                    <p>
-                        Ręcznie tworzone mozaiki artystyczne
-                        inspirowane naturą i pięknem detalu.
-                    </p>
-                </div>
 
                 {/* Nawigacja */}
                 <div className="footer-section">
@@ -23,45 +13,23 @@ function Footer() {
 
                     <ul>
                         <li>
-                            <Link to="/">
-                                Strona główna
-                            </Link>
+                            <Link to="/">Strona główna</Link>
                         </li>
 
                         <li>
-                            <Link to="/gallery">
-                                Galeria
-                            </Link>
+                            <Link to="/gallery">Galeria</Link>
                         </li>
 
                         <li>
-                            <Link to="/archive">
-                                Archiwum
-                            </Link>
+                            <Link to="/archive">Archiwum</Link>
                         </li>
 
                         <li>
-                            <Link to="/process">
-                                Proces tworzenia
-                            </Link>
+                            <Link to="/cooperation">Współpraca</Link>
                         </li>
 
                         <li>
-                            <Link to="/projects">
-                                Zrealizowane projekty
-                            </Link>
-                        </li>
-
-                        <li>
-                            <Link to="/cooperation">
-                                Współpraca
-                            </Link>
-                        </li>
-
-                        <li>
-                            <Link to="/contact">
-                                Kontakt
-                            </Link>
+                            <Link to="/contact">Kontakt</Link>
                         </li>
                     </ul>
                 </div>
@@ -91,16 +59,25 @@ function Footer() {
                     </ul>
                 </div>
 
-                {/* Kontakt */}
+                {/* Instagram */}
                 <div className="footer-section">
-                    <h3>Kontakt</h3>
+                    <h3>Obserwuj nas</h3>
 
-                    <p>
-                        <FaEnvelope />{" "}
-                        <a href="mailto:agnieszka_szelech@wp.pl">
-                            agnieszka_szelech@wp.pl
-                        </a>
-                    </p>
+                    <a
+                        href="https://www.instagram.com/ars__coloris"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Ars Coloris na Instagramie"
+                        style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            textDecoration: "none"
+                        }}
+                    >
+                        <FaInstagram size={24} />
+                        <span>Instagram</span>
+                    </a>
                 </div>
 
             </div>

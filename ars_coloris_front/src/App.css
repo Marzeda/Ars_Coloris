@@ -3066,3 +3066,129 @@ body {
     }
 
 }
+
+
+
+
+/* =========================================
+   ARS COLORIS — STOPKA MINIMALISTYCZNA
+   ========================================= */
+
+.footer {
+    background: #111;
+    color: #d4d4d4;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 32px 30px 28px;
+
+    gap: 55px;
+    align-items: start;
+}
+
+.footer-section {
+    min-width: 0;
+}
+
+.footer-section h3 {
+    margin: 0 0 16px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.4;
+
+    color: #c5a54a;
+    letter-spacing: 0.02em;
+}
+
+.footer-section ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-section li {
+    margin: 0 0 8px;
+}
+
+.footer-section li:last-child {
+    margin-bottom: 0;
+}
+
+.footer-section a {
+    color: #c5c5c5;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.footer-section a:hover {
+    color: #d4af37;
+}
+
+.footer-section a:focus-visible {
+    outline: 2px solid #d4af37;
+    outline-offset: 4px;
+}
+
+.footer-bottom {
+    padding: 14px 20px;
+
+    border-top: 1px solid #292929;
+
+    color: #888;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* TABLET */
+
+@media (max-width: 800px) {
+    .footer-content {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+        padding: 30px 24px;
+    }
+}
+
+/* TELEFON */
+
+@media (max-width: 600px) {
+    .footer-content {
+        display: grid;
+        grid-template-columns: 1fr;
+
+        gap: 26px;
+        padding: 32px 24px;
+
+        text-align: center;
+    }
+
+    .footer-section h3 {
+        margin-bottom: 12px;
+        font-size: 17px;
+    }
+
+    .footer-section li {
+        margin-bottom: 7px;
+    }
+
+    .footer-section a {
+        font-size: 14px;
+    }
+
+    .footer-bottom {
+        padding: 14px 16px;
+        font-size: 12px;
+    }
+}
