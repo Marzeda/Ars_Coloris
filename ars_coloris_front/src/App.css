@@ -3192,3 +3192,22 @@ body {
         font-size: 12px;
     }
 }
+
+
+/* =========================================
+   ARS COLORIS — OPISY PRODUKTÓW
+   Zachowanie akapitów i podziału wierszy
+   ========================================= */
+
+.product-info .product-description {
+    white-space: pre-line;
+
+    font-size: 18px;
+    line-height: 1.85;
+
+    color: #403b35;
+
+    text-align: left;
+    overflow-wrap: break-word;
+}
+

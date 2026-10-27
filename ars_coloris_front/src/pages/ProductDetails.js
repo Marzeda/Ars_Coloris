@@ -220,7 +220,8 @@ function ProductDetails() {
                     Mozaika autorska
                 </p>
 
-                <p>
+                {/* OPIS PRODUKTU — ZACHOWANIE AKAPITÓW */}
+                <p className="product-description">
                     {preventPolishOrphans(
                         product.description || ""
                     )}
